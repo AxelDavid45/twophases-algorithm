@@ -2,7 +2,7 @@ package twophases;
 
  
 public class Constraint {
-    public double[] Coeficients;
+    double[] Coeficients;
     String Operator;
     int[] vArtificials = new int[1], vSlacks = new int[1];
     

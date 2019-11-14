@@ -5,5 +5,6 @@ public abstract class  Objective {
     int typeOptimization; // Max = 1, Min = 2
     boolean Stoppable;
     
-    abstract void toStandard();
+    protected abstract void toStandard(double[] coeficients);
+    protected abstract void updateIndex(double value, int index);
 }

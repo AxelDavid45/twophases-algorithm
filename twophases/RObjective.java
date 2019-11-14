@@ -12,6 +12,7 @@ public class RObjective extends Objective {
     }
     
     //Metodo que actualiza la funcion R
+    @Override
     protected void updateIndex(double value, int index) {
         this.coeficients[index] = value;
     }
@@ -31,6 +32,6 @@ public class RObjective extends Objective {
     }
 
     @Override
-    void toStandard() { }
+    protected void toStandard(double[] coeficients) { }
     
 }
