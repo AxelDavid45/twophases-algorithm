@@ -5,10 +5,12 @@ public class Constraint {
     double[] Coeficients;
     String Operator;
     int[] vArtificials = new int[1], vSlacks = new int[1];
-    
+    double solution;
     //Construimos nuestra restriccion
     public Constraint(double[] coeficients, String operator) {
         this.Operator = operator;
+        //Guardamos el ultimo elemento de la restriccion para usarla mas adelante en clase tabla
+        this.solution = coeficients[coeficients.length];
         //Convertimos a standard inmediatamente
         this.toStandard(coeficients);
     }
@@ -65,5 +67,14 @@ public class Constraint {
     public boolean hasVSlack() {
         return vSlacks[0] == 1 || vSlacks[0] == -1;
     }
+
+    public double getSolution() {
+        return solution;
+    }
+
+    public void setSolution(double solution) {
+        this.solution = solution;
+    }
+    
     
 }
