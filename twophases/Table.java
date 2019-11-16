@@ -52,17 +52,18 @@ public class Table {
                 this.Matrix[i][j] = this.ZObjective.coeficients.get(j); 
             }
         }
-        int counterCoeficients = this.Constraints[0].Coeficients.length;
-        int x = 0, c = 0;
+        //Variable auxiliar que contiene el # de coeficientes de la restriccion
+        int counterCoeficients = this.Constraints[0].getNumberCoeficients();
+        int indexConstraint = 0, IndexConstraints = 0;
         //Llenamos la matriz con los datos que ya tenemos
         for (int i = 1; i <= this.getnRows() - 1; i++) {
             for (int j = 0; j < this.getnColumns(); j++) {
-                if (x < counterCoeficients)
-                    this.Matrix[i][j] = this.Constraints[c].Coeficients[x];    
-                x++;
+                if (indexConstraint < counterCoeficients)
+                    this.Matrix[i][j] = this.Constraints[IndexConstraints].Coeficients[indexConstraint];    
+                indexConstraint++; //Aumentamos el indice para ir cambiando de coeficiente
             }
-            x = 0;
-            c++;
+            indexConstraint = 0; //Reseteamos el indice para la siguiente restriccion
+            IndexConstraints++; //Aumentamos la posicion del indice para recorrer el array restricciones
         }
     }
     

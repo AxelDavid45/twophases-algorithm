@@ -76,5 +76,8 @@ public class Constraint {
         this.solution = solution;
     }
     
+    public int getNumberCoeficients() {
+        return this.Coeficients.length;
+    }
     
 }
