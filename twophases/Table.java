@@ -9,6 +9,7 @@ public class Table {
     int nArtificial = 0, nSlack = 0; //Guarda el numero de variables artificiales y holgura utilizadas
     Objective ZObjective = null, RObjective = null; //Contiene la funcion objetivo o la R
     int enteringColumn, leavingRow; //Contiene la posicion de la columna que entra y la fila que sale
+    int nRows, nColumns; //Numero de filas y columnas que tendra la matriz
     
     public Table(Constraint[] constraints, Objective fObjective) {
         //Inicializamos el arreglo solutions de tamano constraints + 1 donde 1 es la Objective Z o R
@@ -34,7 +35,35 @@ public class Table {
     }
     
     public void buildMatrix() {
-        
+        //Asignamos el tamano de nuestra matriz usando la siguiente regla
+        //Las columnas seran de acuerdo al numero de coeficientes que tenga la funcion Z + vArtifiales + VSlack + 1, 1 que sera la columna de soluciones
+        //Las filas sera el numero de restricciones + 1, donde 1 es la Objective
+        this.setnRows(this.Constraints.length + 1);
+        this.setnColumns(this.ZObjective.numberCoeficients() + this.nArtificial + this.nSlack + 1);
+        this.Matrix = new double[this.getnRows()][this.getnColumns()];
+        //Como de principio Objective no cuenta con valores en las columnas de vSlack o VArtificial agregamos valor 0
+        for (int i = 0; i < 1; i++)
+            for (int j = this.ZObjective.numberCoeficients(); j < nColumns; j++)
+                this.ZObjective.coeficients.add((double) 0);
+            
+        //Introducimos la fObjective Z por default
+        for (int i = 0; i < 1; i++) {
+            for (int j = 0; j < this.getnColumns(); j++) {
+                this.Matrix[i][j] = this.ZObjective.coeficients.get(j); 
+            }
+        }
+        int counterCoeficients = this.Constraints[0].Coeficients.length;
+        int x = 0, c = 0;
+        //Llenamos la matriz con los datos que ya tenemos
+        for (int i = 1; i <= this.getnRows() - 1; i++) {
+            for (int j = 0; j < this.getnColumns(); j++) {
+                if (x < counterCoeficients)
+                    this.Matrix[i][j] = this.Constraints[c].Coeficients[x];    
+                x++;
+            }
+            x = 0;
+            c++;
+        }
     }
     
     public void doSimplex(boolean type) {
@@ -45,7 +74,7 @@ public class Table {
         
     }
     
-    public void replaceZtoR(Objective z) {
+    public void replaceObjective(Objective x) {
         
     }
     
@@ -82,4 +111,21 @@ public class Table {
     }
    
     public void showResult() {}
+
+    public int getnRows() {
+        return nRows;
+    }
+
+    public void setnRows(int nRows) {
+        this.nRows = nRows;
+    }
+
+    public int getnColumns() {
+        return nColumns;
+    }
+
+    public void setnColumns(int nColumns) {
+        this.nColumns = nColumns;
+    }
+    
 }

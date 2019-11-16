@@ -7,10 +7,10 @@ public class Constraint {
     int[] vArtificials = new int[1], vSlacks = new int[1];
     double solution;
     //Construimos nuestra restriccion
-    public Constraint(double[] coeficients, String operator) {
+    public Constraint(double[] coeficients, String operator, double solution) {
         this.Operator = operator;
         //Guardamos el ultimo elemento de la restriccion para usarla mas adelante en clase tabla
-        this.solution = coeficients[coeficients.length];
+        this.solution = solution;
         //Convertimos a standard inmediatamente
         this.toStandard(coeficients);
     }
@@ -23,7 +23,7 @@ public class Constraint {
         //Le asignamos el tamano a la matriz de coeficientes +2 para artificial y slack
         this.Coeficients = new double[coeficients.length + 2];
         
-        //Iteramos hasta el numero de coeficientes que traiga el parametro, el ultimo parametro de los coeficientes es el resultado coeficientes.length - 2
+        //Copiamos el arreglo que viene a la propiedad de coeficientes
         System.arraycopy(coeficients, 0, this.Coeficients, 0, coeficients.length);
         
         //Comprobamos si tiene holgura o slack y agregamos a los coeficientes
