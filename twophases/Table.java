@@ -70,6 +70,7 @@ public class Table {
             indexConstraint = 0; //Reseteamos el indice para la siguiente restriccion
             IndexConstraints++; //Aumentamos la posicion del indice para recorrer el array restricciones
         }
+        
     }
     
     public void doSimplex(boolean type) {
