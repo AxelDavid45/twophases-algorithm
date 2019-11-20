@@ -1,20 +1,20 @@
 package twophases;
-
+import java.util.ArrayList;
 public class RObjective extends Objective {
     
     public RObjective(int nArtificials) {
         //Creamos el arreglo con los coeficientes negativos
-        this.coeficients = new double[nArtificials];
+        this.coeficients = new ArrayList<>();
         for(int i = 0; i < nArtificials - 1; i++)
-            coeficients[i] = -1; //Llenamos el arreglo con los coeficientes negativos
-        coeficients[nArtificials] = 0; //Colocamos el resultado de la funcion R en 0
+            this.coeficients.add((double) -1); //Llenamos el arreglo con los coeficientes negativos
+        this.coeficients.add((double) 0); //Colocamos el resultado de la funcion R en 0
         this.Stoppable = false; //Colocamos que no es detenible al inicio
     }
     
     //Metodo que actualiza la funcion R
     @Override
     protected void updateIndex(double value, int index) {
-        this.coeficients[index] = value;
+        this.coeficients.add(index, value);
     }
     
     // Determina cuando la funcion objetivo vuelve a ser -1

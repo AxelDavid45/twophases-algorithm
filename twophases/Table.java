@@ -34,6 +34,11 @@ public class Table {
         this.ZObjective = fObjective;
     }
     
+    /*
+        Build matrix nos servira para poder construir la matriz y despues a partir de los
+        metodos phase1 y doSimplex modificarla para hacer el algoritmo dependiendo de si tiene 
+        variables artificiales o no
+    */
     public void buildMatrix() {
         //Asignamos el tamano de nuestra matriz usando la siguiente regla
         //Las columnas seran de acuerdo al numero de coeficientes que tenga la funcion Z + vArtifiales + VSlack + 1, 1 que sera la columna de soluciones
@@ -55,7 +60,7 @@ public class Table {
         //Variable auxiliar que contiene el # de coeficientes de la restriccion
         int counterCoeficients = this.Constraints[0].getNumberCoeficients();
         int indexConstraint = 0, IndexConstraints = 0;
-        //Llenamos la matriz con los datos que ya tenemos
+        //Llenamos la matriz con los datos que ya tenemos comenzando una fila
         for (int i = 1; i <= this.getnRows() - 1; i++) {
             for (int j = 0; j < this.getnColumns(); j++) {
                 if (indexConstraint < counterCoeficients)
