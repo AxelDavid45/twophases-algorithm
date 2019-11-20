@@ -106,6 +106,12 @@ public class Table {
         return indexRows;
     }
     
+    //Comienza a realizar la fase 1 del metodo dos fases
+    public void phase1() {
+        //Buscamos las filas que contienen variables artificiales, usamos el metodo creado para esto
+        Vector rowsArtficial = this.searchNumOneInArtificials();
+    }
+    
     public void buildMatrix() {
         //Asignamos el tamano de nuestra matriz usando la siguiente regla
         //Las columnas seran de acuerdo al numero de coeficientes que tenga la funcion Z + vArtifiales + VSlack + 1, 1 que sera la columna de soluciones
@@ -162,9 +168,7 @@ public class Table {
 
     }
 
-    public void phase1() {
-
-    }
+    
 
     public void updateTable() {
 
