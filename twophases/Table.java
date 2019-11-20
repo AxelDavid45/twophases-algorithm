@@ -5,6 +5,7 @@ import java.util.Vector;
 public class Table {
 
     double[][] Matrix; //Contiene los datos para hacer iteraciones
+    double[][] MatrixArtificial;
     double[][] Slacks;
     double[][] Artificial;
     Vector Solutions; //Contiene las soluciones de cada fila el ultimo elemento es la sol de R o Z
@@ -71,6 +72,40 @@ public class Table {
         metodos phase1 y doSimplex modificarla para hacer el algoritmo dependiendo de si tiene 
         variables artificiales o no
      */
+    public void buildMatrixArtificials() {
+        //Asignamos el tamano de la matriz tomando en cuenta la funcion artificial
+          //Las filas sera el numero de restricciones + 1, donde 1 es la Objective
+        this.setnRows(this.Constraints.length + 1);
+        this.setnColumns(this.ZObjective.numberCoeficients());
+        this.MatrixArtificial = new double[this.getnRows()][this.getnColumns()];
+        int nElementsConstraints = 0, posConstraint = 0;
+        for(int i = 1; i < this.getnRows(); i++) {
+            for (int j = 0; j < this.getnColumns(); j++) {
+                this.MatrixArtificial[i][j] = this.Constraints[nElementsConstraints].Coeficients[posConstraint];
+                posConstraint++;
+            }
+            posConstraint = 0;
+            nElementsConstraints++;
+        }
+        
+    }
+    
+    public Vector searchNumOneInArtificials() {
+        //Creamos el vector que contiene los indices de fila con 1
+        Vector indexRows = new Vector(this.Artificial.length);
+        //Recorremos la matriz para buscar
+        for (int i = 1; i < this.Artificial.length; i++) {
+            for (int j = 0; j < this.Artificial[0].length; j++) {
+                //Comprobamos si esa fila contiene algun 1 y lo agregamos al vector
+                if (this.Artificial[i][j] == 1) {
+                    indexRows.add(i);
+                }
+                
+            }
+        }
+        return indexRows;
+    }
+    
     public void buildMatrix() {
         //Asignamos el tamano de nuestra matriz usando la siguiente regla
         //Las columnas seran de acuerdo al numero de coeficientes que tenga la funcion Z + vArtifiales + VSlack + 1, 1 que sera la columna de soluciones
@@ -116,7 +151,11 @@ public class Table {
         Metodo que remplaza la funcion objecito z o r dependiendo
      */
     public void replaceRObjective(Objective x) {
-
+        for (int i = 0; i < 1; i ++) {
+            for (int j = 0; j < this.Artificial[0].length; j++) {
+                this.Artificial[i][j] = x.coeficients.get(j);
+            }
+        }
     }
 
     public void doSimplex(boolean type) {
