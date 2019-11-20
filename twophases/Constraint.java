@@ -10,7 +10,7 @@ public class Constraint {
     public Constraint(double[] coeficients, String operator, double solution) {
         this.Operator = operator;
         //Guardamos el ultimo elemento de la restriccion para usarla mas adelante en clase tabla
-        this.solution = solution;
+        this.solution = (double) solution;
         //Convertimos a standard inmediatamente
         this.toStandard(coeficients);
     }
@@ -25,20 +25,6 @@ public class Constraint {
         
         //Copiamos el arreglo que viene a la propiedad de coeficientes
         System.arraycopy(coeficients, 0, this.Coeficients, 0, coeficients.length);
-        
-//        //Comprobamos si tiene holgura o slack y agregamos a los coeficientes
-//        if (this.hasVSlack() && this.hasVArtificial()) {
-//            //Agregamos la variable de holgura en el penultimo renglon de los coeficientes
-//            this.Coeficients[this.Coeficients.length - 2] = this.vSlacks[0];
-//            this.Coeficients[this.Coeficients.length-1] = this.vArtificials[0];
-//        }
-//        else if (this.hasVArtificial())
-//            //Asignamos el valor que se tenga la variable artificial al ultimo de los coeficientes
-//            this.Coeficients[this.Coeficients.length-1] = this.vArtificials[0];
-//        else
-//            this.Coeficients[this.Coeficients.length - 2] = this.vSlacks[0];
-//            
-        
         
     }
     
