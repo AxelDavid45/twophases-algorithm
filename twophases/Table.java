@@ -5,6 +5,8 @@ import java.util.Vector;
 public class Table {
 
     double[][] Matrix; //Contiene los datos para hacer iteraciones
+    double[][] Slacks;
+    double[][] Artificial;
     Vector Solutions; //Contiene las soluciones de cada fila el ultimo elemento es la sol de R o Z
     Constraint[] Constraints; //Contiene las restricciones
     int nArtificial = 0, nSlack = 0; //Guarda el numero de variables artificiales y holgura utilizadas
@@ -15,6 +17,7 @@ public class Table {
     public Table(Constraint[] constraints, Objective fObjective) {
         //Inicializamos el arreglo solutions de tamano constraints + 1 donde 1 es la Objective Z o R
         this.Solutions = new Vector(constraints.length + 1);
+        
         //Recorremos el array y contabilizamos cuantas varibles de holgura o artificales tenemos
         for (Constraint x : constraints) {
             if (x.hasVArtificial() && x.hasVSlack()) {
@@ -28,6 +31,33 @@ public class Table {
             //Guardamos las soluciones de cada restriccion en el arreglo Solutions
             this.Solutions.addElement(x.getSolution());
         }
+        
+        //Creamos el tamaño de la matriz de holgura +1 para la funcion z o r
+        this.Slacks = new double[constraints.length + 1][this.getnSlack()];
+        //Agregamos los valores de las slacks a la matriz de forma escalonada, empezando en la fila 1
+        int indexConstraints = 0; //Va deslizandose por los elementos del arreglo constraints
+        int indexColMatrix = 0; // Va posicionando los valores de acuerdo a la restriccion que si tenga vSlack
+        for (int i = 1; i < constraints.length +1; i++) {
+            if (constraints[indexConstraints].hasVSlack()) { //Comprobamos si tiene variable slack -1 o 1
+                this.Slacks[i][indexColMatrix] = constraints[indexConstraints].getvSlacks()[0];
+                indexColMatrix++;
+            }
+            indexConstraints++;    
+        }
+        
+        //Creamos la matriz de variables artificiales
+        this.Artificial = new double[constraints.length + 1][this.getnArtificial()];
+        //Agregamos los valores de las slacks a la matriz de forma escalonada, empezando en la fila 1
+        indexConstraints = 0; //Va deslizandose por los elementos del arreglo constraints
+        indexColMatrix = 0; // Va posicionando los valores de acuerdo a la restriccion que si tenga vSlack
+        for (int i = 1; i < constraints.length +1; i++) {
+            if (constraints[indexConstraints].hasVArtificial()) { //Comprobamos si tiene variable slack -1 o 1
+                this.Artificial[i][indexColMatrix] = constraints[indexConstraints].getvArtificials()[0];
+                indexColMatrix++;
+            }
+            indexConstraints++;    
+        }
+       
         //Agregamos la solucion inicial de Z que es 0 al final del vector
         this.Solutions.addElement(0);
         //Asignamos las constantes al arreglo de constantes
@@ -72,7 +102,7 @@ public class Table {
                     this.Matrix[i][j] = this.Constraints[IndexConstraints].Coeficients[indexConstraint];
                 } else {
                     //Comprobamos si hemos alcanzado la col de soluciones e insertamos la sol de cada constraint
-                    this.Matrix[i][this.getnColumns()-1] = this.Constraints[IndexConstraints].getSolution();
+                    this.Matrix[i][this.getnColumns() - 1] = this.Constraints[IndexConstraints].getSolution();
                 }
                 indexConstraint++; //Aumentamos el indice para ir cambiando de coeficiente
             }
@@ -81,12 +111,12 @@ public class Table {
         }
 
     }
-    
+
     /*
         Metodo que remplaza la funcion objecito z o r dependiendo
-    */
+     */
     public void replaceRObjective(Objective x) {
-        
+
     }
 
     public void doSimplex(boolean type) {

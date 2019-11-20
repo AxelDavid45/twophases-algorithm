@@ -4,7 +4,7 @@ package twophases;
 public class Constraint {
     double[] Coeficients;
     String Operator;
-    int[] vArtificials = new int[1], vSlacks = new int[1];
+    double[] vArtificials = new double[1], vSlacks = new double[1];
     double solution;
     //Construimos nuestra restriccion
     public Constraint(double[] coeficients, String operator, double solution) {
@@ -21,23 +21,23 @@ public class Constraint {
         this.analyzeOperator(this.Operator);
         
         //Le asignamos el tamano a la matriz de coeficientes +2 para artificial y slack
-        this.Coeficients = new double[coeficients.length + 2];
+        this.Coeficients = new double[coeficients.length];
         
         //Copiamos el arreglo que viene a la propiedad de coeficientes
         System.arraycopy(coeficients, 0, this.Coeficients, 0, coeficients.length);
         
-        //Comprobamos si tiene holgura o slack y agregamos a los coeficientes
-        if (this.hasVSlack() && this.hasVArtificial()) {
-            //Agregamos la variable de holgura en el penultimo renglon de los coeficientes
-            this.Coeficients[this.Coeficients.length - 2] = this.vSlacks[0];
-            this.Coeficients[this.Coeficients.length-1] = this.vArtificials[0];
-        }
-        else if (this.hasVArtificial())
-            //Asignamos el valor que se tenga la variable artificial al ultimo de los coeficientes
-            this.Coeficients[this.Coeficients.length-1] = this.vArtificials[0];
-        else
-            this.Coeficients[this.Coeficients.length - 2] = this.vSlacks[0];
-            
+//        //Comprobamos si tiene holgura o slack y agregamos a los coeficientes
+//        if (this.hasVSlack() && this.hasVArtificial()) {
+//            //Agregamos la variable de holgura en el penultimo renglon de los coeficientes
+//            this.Coeficients[this.Coeficients.length - 2] = this.vSlacks[0];
+//            this.Coeficients[this.Coeficients.length-1] = this.vArtificials[0];
+//        }
+//        else if (this.hasVArtificial())
+//            //Asignamos el valor que se tenga la variable artificial al ultimo de los coeficientes
+//            this.Coeficients[this.Coeficients.length-1] = this.vArtificials[0];
+//        else
+//            this.Coeficients[this.Coeficients.length - 2] = this.vSlacks[0];
+//            
         
         
     }
@@ -59,6 +59,16 @@ public class Constraint {
             
            
     }
+
+    public double[] getvArtificials() {
+        return vArtificials;
+    }
+
+    public double[] getvSlacks() {
+        return vSlacks;
+    }
+    
+    
 
     public boolean hasVArtificial() {
         return vArtificials[0] == 1;
