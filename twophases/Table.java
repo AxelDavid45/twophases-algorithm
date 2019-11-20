@@ -5,9 +5,10 @@ import java.util.Vector;
 public class Table {
 
     double[][] Matrix; //Contiene los datos para hacer iteraciones
-    double[][] MatrixArtificial;
+    double[][] MatrixArtificial;//Matriz de coeficientes de las varibles del problema
     double[][] Slacks;
     double[][] Artificial;
+    double[] finalSolutions;
     Vector Solutions; //Contiene las soluciones de cada fila el ultimo elemento es la sol de R o Z
     Constraint[] Constraints; //Contiene las restricciones
     int nArtificial = 0, nSlack = 0; //Guarda el numero de variables artificiales y holgura utilizadas
@@ -18,7 +19,8 @@ public class Table {
     public Table(Constraint[] constraints, Objective fObjective) {
         //Inicializamos el arreglo solutions de tamano constraints + 1 donde 1 es la Objective Z o R
         this.Solutions = new Vector(constraints.length + 1);
-
+        //Le asignamos el tamano al arreglo que servira para almacenar las soluciones finales
+        this.finalSolutions = new double[fObjective.coeficients.size()];
         //Recorremos el array y contabilizamos cuantas varibles de holgura o artificales tenemos
         for (Constraint x : constraints) {
             if (x.hasVArtificial() && x.hasVSlack()) {
@@ -173,6 +175,15 @@ public class Table {
             }
         }
 
+    }
+
+    public void setEnteringColMinimize() {
+        //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas positivo
+        for (int i = 0; i < 1; i++) {
+            for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
+
+            }
+        }
     }
 
     public void buildMatrix() {
