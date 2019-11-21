@@ -13,7 +13,7 @@ public class Table {
     Constraint[] Constraints; //Contiene las restricciones
     int nArtificial = 0, nSlack = 0; //Guarda el numero de variables artificiales y holgura utilizadas
     Objective ZObjective = null, RObjective = null; //Contiene la funcion objetivo o la R
-    int enteringColumn, leavingRow; //Contiene la posicion de la columna que entra y la fila que sale
+    int[] enteringColumn, leavingRow; //Contiene la posicion de la columna que entra y la fila que sale
     int nRows, nColumns; //Numero de filas y columnas que tendra la matriz
 
     public Table(Constraint[] constraints, Objective fObjective) {
@@ -177,13 +177,37 @@ public class Table {
 
     }
 
-    public void setEnteringColMinimize() {
-        //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas positivo
-        for (int i = 0; i < 1; i++) {
-            for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
-
+    public void setEnteringColumn(int type) {
+        int[] position = new int[2];
+        double maximum = this.MatrixArtificial[0][0];
+        double minimum = this.MatrixArtificial[0][0];
+        //types: 1 minimizar, 2 maximizar
+        if (type == 1) {
+            //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas positivo
+            for (int i = 0; i < 1; i++) {
+                for (int j = 1; j < this.MatrixArtificial[0].length; j++) {
+                    //Comprobamos que todo sea mayor a cero para que nos de el numero mas positivo
+                    if (this.MatrixArtificial[i][j] > maximum && this.MatrixArtificial[i][j] > 0 && maximum > 0) {
+                        maximum = this.MatrixArtificial[i][j]; //nuevo maximo
+                        position[0] = i;//Posicion fila
+                        position[1] = j; //Posicion columna
+                    }
+                }
+            }
+        } else if(type == 2) { //Maximizar
+            //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas positivo
+            for (int i = 0; i < 1; i++) {
+                for (int j = 1; j < this.MatrixArtificial[0].length; j++) {
+                    if (this.MatrixArtificial[i][j] < minimum && this.MatrixArtificial[i][j] < 0 && minimum < 0) {
+                        maximum = this.MatrixArtificial[i][j]; //nuevo maximo
+                        position[0] = i;//Posicion fila
+                        position[1] = j; //Posicion columna
+                    }
+                }
             }
         }
+
+        this.enteringColumn = position;
     }
 
     public void buildMatrix() {
@@ -266,11 +290,11 @@ public class Table {
         return nSlack;
     }
 
-    public int getEnteringColumn() {
+    public int[] getEnteringColumn() {
         return enteringColumn;
     }
 
-    public int getLeavingRow() {
+    public int[] getLeavingRow() {
         return leavingRow;
     }
 
