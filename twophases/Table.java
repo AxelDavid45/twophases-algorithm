@@ -13,7 +13,7 @@ public class Table {
     Constraint[] Constraints; //Contiene las restricciones
     int nArtificial = 0, nSlack = 0; //Guarda el numero de variables artificiales y holgura utilizadas
     Objective ZObjective = null, RObjective = null; //Contiene la funcion objetivo o la R
-    int[] enteringColumn, leavingRow = new int[1]; //Contiene la posicion de la columna que entra y la fila que sale
+    int enteringColumn = 0, leavingRow = 0; //Contiene la posicion de la columna que entra y la fila que sale
     int nRows, nColumns; //Numero de filas y columnas que tendra la matriz
 
     public Table(Constraint[] constraints, Objective fObjective) {
@@ -204,7 +204,7 @@ public class Table {
         EnteringColumn
      */
     public void setEnteringColumn(int type) {
-        int[] position = new int[2];
+        int position = 0;
         double maximum = this.MatrixArtificial[0][0];
         double minimum = this.MatrixArtificial[0][0];
         //types: 1 minimizar, 2 maximizar
@@ -215,8 +215,7 @@ public class Table {
                     //Comprobamos que todo sea mayor a cero para que nos de el numero mas positivo
                     if (this.MatrixArtificial[i][j] > maximum && this.MatrixArtificial[i][j] > 0 && maximum > 0) {
                         maximum = this.MatrixArtificial[i][j]; //nuevo maximo
-                        position[0] = i;//Posicion fila
-                        position[1] = j; //Posicion columna
+                        position = j; //Posicion columna
                     }
                 }
             }
@@ -226,8 +225,7 @@ public class Table {
                 for (int j = 1; j < this.MatrixArtificial[0].length; j++) {
                     if (this.MatrixArtificial[i][j] < minimum && this.MatrixArtificial[i][j] < 0 && minimum < 0) {
                         maximum = this.MatrixArtificial[i][j]; //nuevo maximo
-                        position[0] = i;//Posicion fila
-                        position[1] = j; //Posicion columna
+                        position = j; //Posicion columna
                     }
                 }
             }
@@ -238,7 +236,7 @@ public class Table {
 
     public void setLeavingRow() {
         //Utilizamos la columna que va a ser iterada
-        int column = this.enteringColumn[1];
+        int column = this.enteringColumn;
         //Variables creadas para guardar en numerador el valor de la solucion y en denominador el valor de la columna
         double numerator, denominator;
         //Creamos un arreglo para ir almacenando los resultados temporales, el tamano de este debe ser igual al numero de restricciones
@@ -270,7 +268,7 @@ public class Table {
             }
         }
         //Asignamos el valor obtenido del menor positivo
-        this.leavingRow[0] = position;
+        this.leavingRow = position;
 
     }
 
@@ -354,11 +352,11 @@ public class Table {
         return nSlack;
     }
 
-    public int[] getEnteringColumn() {
+    public int getEnteringColumn() {
         return enteringColumn;
     }
 
-    public int[] getLeavingRow() {
+    public int getLeavingRow() {
         return leavingRow;
     }
 
