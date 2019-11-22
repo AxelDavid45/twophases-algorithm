@@ -179,7 +179,6 @@ public class Table {
         //Guardamos el valor de tmpSolution
         this.tmpSolution = (double) this.Solutions.get(this.getLeavingRow() - 1);
 
-        int indexSolution = 0;
         //Recorremos la columna buscando si es 0 o no, comenzamos desde la fila 0
         for (int i = 0; i < this.MatrixArtificial.length; i++) {
             if (this.MatrixArtificial[i][this.getEnteringColumn()] != 0 && this.MatrixArtificial[i][this.getEnteringColumn()] > 0) {
