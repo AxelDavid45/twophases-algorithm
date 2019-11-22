@@ -13,7 +13,7 @@ public class Table {
     Constraint[] Constraints; //Contiene las restricciones
     int nArtificial = 0, nSlack = 0; //Guarda el numero de variables artificiales y holgura utilizadas
     Objective ZObjective = null, RObjective = null; //Contiene la funcion objetivo o la R
-    int[] enteringColumn, leavingRow; //Contiene la posicion de la columna que entra y la fila que sale
+    int[] enteringColumn, leavingRow = new int[1]; //Contiene la posicion de la columna que entra y la fila que sale
     int nRows, nColumns; //Numero de filas y columnas que tendra la matriz
 
     public Table(Constraint[] constraints, Objective fObjective) {
@@ -95,7 +95,7 @@ public class Table {
     /*
         Metodo que busca las filas que contengan variables artificiales en la matriz de 
         artificiales
-    */
+     */
     public Vector searchNumOneInArtificials() {
         //Creamos el vector que contiene los indices de fila con 1
         Vector indexRows = new Vector(this.Artificial.length);
@@ -136,7 +136,7 @@ public class Table {
     /*
         Realiza la operacion indicada utilizando el parametro rowAux para afectar a la fila rowAffected
         en la matriz de coeficientes
-    */
+     */
     public void mkOperatCoeficients(int rowAffected, int rowAux, String operation) {
         //Realiza una suma de filas
         if (operation.equals("+")) {
@@ -152,7 +152,7 @@ public class Table {
     /*
         Realiza la operacion indicada utilizando el parametro rowAux para afectar a la fila rowAffected
         en la matriz de Slacks
-    */
+     */
     public void mkOperatSlacks(int rowAffected, int rowAux, String operation) {
         if (operation.equals("+")) {
             for (int j = 0; j < this.Slacks[0].length; j++) {
@@ -163,11 +163,11 @@ public class Table {
             }
         }
     }
-    
+
     /*
         Realiza la operacion indicada utilizando el parametro rowAux para afectar a la fila rowAffected
         en la matriz de artificiales
-    */
+     */
     public void mkOperatArtificial(int rowAffected, int rowAux, String operation) {
         if (operation.equals("+")) {
             for (int j = 0; j < this.Artificial[0].length; j++) {
@@ -183,7 +183,7 @@ public class Table {
         Realiza la operacion indicada utilizando el parametro posAux para afectar el elemento
         posAffected en la matriz de coeficientes, existe un caso especial para cuando el elemento
         correspondiente a la funcion objetivo es cero
-    */
+     */
     public void mkOperatSolutionsObjective(int posAffected, int posAux, String operation) {
         int posInSolutions = posAux - 1, posAffectedSols = this.Solutions.size() - 1;
 
@@ -202,7 +202,7 @@ public class Table {
     /*
         Analiza cual va a ser la columna que va a ser la entrante y lo guarda en la propiedad 
         EnteringColumn
-    */
+     */
     public void setEnteringColumn(int type) {
         int[] position = new int[2];
         double maximum = this.MatrixArtificial[0][0];
@@ -220,7 +220,7 @@ public class Table {
                     }
                 }
             }
-        } else if(type == 2) { //Maximizar
+        } else if (type == 2) { //Maximizar
             //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas positivo
             for (int i = 0; i < 1; i++) {
                 for (int j = 1; j < this.MatrixArtificial[0].length; j++) {
@@ -235,9 +235,43 @@ public class Table {
 
         this.enteringColumn = position;
     }
-    
+
     public void setLeavingRow() {
-        
+        //Utilizamos la columna que va a ser iterada
+        int column = this.enteringColumn[1];
+        //Variables creadas para guardar en numerador el valor de la solucion y en denominador el valor de la columna
+        double numerator, denominator;
+        //Creamos un arreglo para ir almacenando los resultados temporales, el tamano de este debe ser igual al numero de restricciones
+        double[] tmpResults = new double[this.Constraints.length];
+        //Comenzamos a recorrer la matriz de coeficientes y hacemos la operacion en conjunto con el array de soluciones a partir de la columna
+        int indexSolutions = 0; //Variable para recorrer el arreglo de soluciones
+        for (int i = 1; i < this.MatrixArtificial.length; i++) {
+            //Aumentamos uno para que recorramos correctamente la columna
+            for (int j = column; j < column + 1; j++) {
+                //Guardamos el valor de la columna como denominador para hacer la division
+                numerator = (double) this.Solutions.get(indexSolutions);
+                //Guardamos el valor de la solucion como numerador para hacer la division
+                denominator = this.MatrixArtificial[i][j];
+                //Guardamos el resultado en el arreglo temporal para poder decidir cual sera la fila de salida
+                tmpResults[indexSolutions] = numerator / denominator;
+                //Aumentamos el indice para seguir recorriendo las soluciones
+                indexSolutions++;
+            }
+        }
+        //Una vez hecha la division debemos de seleccionar la fila con el menor resultado positivo, la fila se seleccionara diciendo que la posicion de la solucion + 1 para encontrar el valor en las filas de las matrices artificial, coeficientes y slacks
+        // Valor auxiliar para hacer las comparaciones
+        double minimum = tmpResults[0];
+        int position = 0;
+        for (int i = 0; i < tmpResults.length; i++) {
+            //Comprobamos para ver cual sera el resultado
+            if (tmpResults[i] < minimum && tmpResults[i] > 0 && minimum > 0) {
+                minimum = tmpResults[i];
+                position = i + 1;
+            }
+        }
+        //Asignamos el valor obtenido del menor positivo
+        this.leavingRow[0] = position;
+
     }
 
     public void buildMatrix() {
