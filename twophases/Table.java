@@ -92,6 +92,10 @@ public class Table {
 
     }
 
+    /*
+        Metodo que busca las filas que contengan variables artificiales en la matriz de 
+        artificiales
+    */
     public Vector searchNumOneInArtificials() {
         //Creamos el vector que contiene los indices de fila con 1
         Vector indexRows = new Vector(this.Artificial.length);
@@ -129,7 +133,12 @@ public class Table {
 
     }
 
+    /*
+        Realiza la operacion indicada utilizando el parametro rowAux para afectar a la fila rowAffected
+        en la matriz de coeficientes
+    */
     public void mkOperatCoeficients(int rowAffected, int rowAux, String operation) {
+        //Realiza una suma de filas
         if (operation.equals("+")) {
             for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
                 //Hacemos la operacion solicitada
@@ -140,6 +149,10 @@ public class Table {
         }
     }
 
+    /*
+        Realiza la operacion indicada utilizando el parametro rowAux para afectar a la fila rowAffected
+        en la matriz de Slacks
+    */
     public void mkOperatSlacks(int rowAffected, int rowAux, String operation) {
         if (operation.equals("+")) {
             for (int j = 0; j < this.Slacks[0].length; j++) {
@@ -150,7 +163,11 @@ public class Table {
             }
         }
     }
-
+    
+    /*
+        Realiza la operacion indicada utilizando el parametro rowAux para afectar a la fila rowAffected
+        en la matriz de artificiales
+    */
     public void mkOperatArtificial(int rowAffected, int rowAux, String operation) {
         if (operation.equals("+")) {
             for (int j = 0; j < this.Artificial[0].length; j++) {
@@ -162,6 +179,11 @@ public class Table {
         }
     }
 
+    /*
+        Realiza la operacion indicada utilizando el parametro posAux para afectar el elemento
+        posAffected en la matriz de coeficientes, existe un caso especial para cuando el elemento
+        correspondiente a la funcion objetivo es cero
+    */
     public void mkOperatSolutionsObjective(int posAffected, int posAux, String operation) {
         int posInSolutions = posAux - 1, posAffectedSols = this.Solutions.size() - 1;
 
@@ -177,6 +199,10 @@ public class Table {
 
     }
 
+    /*
+        Analiza cual va a ser la columna que va a ser la entrante y lo guarda en la propiedad 
+        EnteringColumn
+    */
     public void setEnteringColumn(int type) {
         int[] position = new int[2];
         double maximum = this.MatrixArtificial[0][0];
@@ -208,6 +234,10 @@ public class Table {
         }
 
         this.enteringColumn = position;
+    }
+    
+    public void setLeavingRow() {
+        
     }
 
     public void buildMatrix() {
