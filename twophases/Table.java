@@ -15,6 +15,11 @@ public class Table {
     Objective ZObjective = null, RObjective = null; //Contiene la funcion objetivo o la R
     int enteringColumn = 0, leavingRow = 0; //Contiene la posicion de la columna que entra y la fila que sale
     int nRows, nColumns; //Numero de filas y columnas que tendra la matriz
+    //Contienen valores temporales para poder hacer operaciones de suma o resta de filas
+    double[] tmpCoeficients;
+    double[] tmpSlacks;
+    double[] tmpArtificials;
+    double tmpSolution;
 
     public Table(Constraint[] constraints, Objective fObjective) {
         //Inicializamos el arreglo solutions de tamano constraints + 1 donde 1 es la Objective Z o R
@@ -67,6 +72,7 @@ public class Table {
         this.Constraints = constraints;
         //Asignamos la funcion objetivo Z
         this.ZObjective = fObjective;
+
     }
 
     /*
@@ -114,6 +120,11 @@ public class Table {
 
     //Comienza a realizar la fase 1 del metodo dos fases
     public void phase1() {
+        //Creamos el tamano de los arreglos temporales
+        this.tmpCoeficients = new double[this.MatrixArtificial[0].length];
+        this.tmpSlacks = new double[this.Slacks[0].length];
+        this.tmpArtificials = new double[this.Artificial[0].length];
+
         //Buscamos las filas que contienen variables artificiales, usamos el metodo creado para esto
         Vector rowsArtficial = this.searchNumOneInArtificials();
         int rowR = 0;
@@ -137,50 +148,97 @@ public class Table {
         //Seleccionamos el valor en la matriz de coeficientes que coincida con la posicon [enteringcolumn, leavingRow] y este sera la fila pivote y comprobar si este es igual a 1, si no multiplicar toda la fila por el inverso multiplicativo
         if (this.MatrixArtificial[this.getLeavingRow()][this.getEnteringColumn()] != 1.0) {
             //Hacemos la fila pivote, multiplicando por el inverso multiplicativo
-            this.mkRowPivot();    
+            this.mkRowPivot();
         }
         //Despues de realizar la fila pivote debemos de guardar el valor de la variable de entrada en el arreglo de finalSolutions.
         this.finalSolutions[this.getEnteringColumn()] = (double) this.Solutions.get(this.getLeavingRow() - 1);
         //Una vez realizada la fila pivote, debemos de comprobar que los demas valores que se encuentren en la misma columna que nuestro elemento pivote(valor 1) sea igual a cero, si no debemos comenzar a realizar las sumas o restas correspondientes a cada fila
         //Guardamos en arreglos pequeños los elementos que pertenecen a la fila pivote
-        double[] tmpCoeficients = new double[this.MatrixArtificial[0].length];
-        double[] tmpSlacks = new double[this.Slacks[0].length];
-        double[] tmpArtificials = new double[this.Artificial[0].length];
         //Comenzamos a llenar los arreglos temporales
         //Llenamos el arreglo tmp con valores de la matriz de coeficientes
-       for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
+        for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
             for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
-                tmpCoeficients[j] = (double) this.MatrixArtificial[i][j];
+                this.tmpCoeficients[j] = (double) this.MatrixArtificial[i][j];
             }
         }
-       
-       //Llenamos el arreglo tmp con valores de la matriz de slacks
-       for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
-            for (int j = 0; j < this.Slacks[0].length; j++) {
-                tmpSlacks[j] = (double) this.Slacks[i][j];
-            }
-        }
-       
-       //Llenamos el arreglo tmp con valores de la matriz artificiales
-       for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
-            for (int j = 0; j < this.Artificial[0].length; j++) {
-                tmpArtificials[j] = (double) this.Artificial[i][j];
-            }
-        }
-        
-       for(double i: tmpCoeficients) {
-           System.out.println("Valor coeficiente: " + i);
-       }
-       
-       for(double i: tmpSlacks) {
-           System.out.println("Valor slacks: " + i);
-       }
-       
-       for(double i: tmpArtificials) {
-           System.out.println("Valor artifial: " + i);
-       }
-       
 
+        //Llenamos el arreglo tmp con valores de la matriz de slacks
+        for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
+            for (int j = 0; j < this.Slacks[0].length; j++) {
+                this.tmpSlacks[j] = (double) this.Slacks[i][j];
+            }
+        }
+
+        //Llenamos el arreglo tmp con valores de la matriz artificiales
+        for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
+            for (int j = 0; j < this.Artificial[0].length; j++) {
+                this.tmpArtificials[j] = (double) this.Artificial[i][j];
+            }
+        }
+
+        //Guardamos el valor de tmpSolution
+        this.tmpSolution = (double) this.Solutions.get(this.getLeavingRow() - 1);
+
+        int indexSolution = 0;
+        //Recorremos la columna buscando si es 0 o no, comenzamos desde la fila 0
+        for (int i = 0; i < this.MatrixArtificial.length; i++) {
+            if (this.MatrixArtificial[i][this.getEnteringColumn()] != 0 && this.MatrixArtificial[i][this.getEnteringColumn()] > 0) {
+                //Procedemos a guardar el valor temporal para multiplicarlo
+                double tmpValue = (double) this.MatrixArtificial[i][this.getEnteringColumn()] * -1;
+                //Multiplicamos el valor por los arreglos temporales
+                System.out.println(tmpValue);
+                this.multiplyTmpCoeficients(tmpValue);
+                this.multiplyTmpSlacks(tmpValue);
+                this.multiplyTmpArtificials(tmpValue);
+                this.multiplyTmpSolution(tmpValue);
+                //Realizamos la suma de las filas en coeficientes
+                this.mkOperatTmpCoeficients(i, "+");
+//                //Realizamos la suma de las filas en slacks
+                this.mkOperatTmpSlacks(i, "+");
+//                //Realizamos la suma de las filas en artificiales
+                this.mkOperatTmpArtificials(i, "+");
+                //Realizamos la suma de las soluciones tmp y las que estan en el arreglo de soluciones
+                this.mkOperatTmpSolution(this.Solutions.size() - 1, "+");
+                
+                break;
+            }
+        }
+
+        for (double i : tmpCoeficients) {
+            System.out.println("Valor coeficiente: " + i);
+        }
+
+        for (double i : tmpSlacks) {
+            System.out.println("Valor slacks: " + i);
+        }
+
+        for (double i : tmpArtificials) {
+            System.out.println("Valor artifial: " + i);
+        }
+        System.out.println("Valor solucion: " + this.tmpSolution);
+
+    }
+
+    public void multiplyTmpSolution(double value) {
+        this.tmpSolution = this.tmpSolution * value;
+    }
+
+    public void multiplyTmpArtificials(double value) {
+        for (int i = 0; i < this.tmpArtificials.length; i++) {
+            this.tmpArtificials[i] = this.tmpArtificials[i] * value;
+        }
+    }
+
+    public void multiplyTmpSlacks(double value) {
+        for (int i = 0; i < this.tmpSlacks.length; i++) {
+            this.tmpSlacks[i] = this.tmpSlacks[i] * value;
+        }
+    }
+
+    public void multiplyTmpCoeficients(double value) {
+        for (int i = 0; i < this.tmpCoeficients.length; i++) {
+            this.tmpCoeficients[i] = this.tmpCoeficients[i] * value;
+        }
     }
 
     public void mkRowPivot() {
@@ -218,6 +276,47 @@ public class Table {
         //Realizamos la operacion con el arreglo de soluciones
         double numerator = (double) this.Solutions.get(this.getLeavingRow() - 1);
         this.Solutions.set(this.getLeavingRow() - 1, (numerator / denominator));
+    }
+
+    public void mkOperatTmpCoeficients(int rowAffected, String operation) {
+        //Realiza una suma de filas
+        if (operation.equals("+")) {
+            for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
+                //Hacemos la operacion solicitada
+                double aux = this.MatrixArtificial[rowAffected][j] + this.tmpCoeficients[j];
+                //Actualizamos el valor de la posicion
+                this.MatrixArtificial[rowAffected][j] = aux;
+            }
+        }
+    }
+
+    public void mkOperatTmpSlacks(int rowAffected, String operation) {
+        if (operation.equals("+")) {
+            for (int j = 0; j < this.Slacks[0].length; j++) {
+                //Hacemos la operacion solicitada
+                double aux = this.Slacks[rowAffected][j] + this.tmpSlacks[j];
+                //Actualizamos el valor de la posicion
+                this.Slacks[rowAffected][j] = aux;
+            }
+        }
+    }
+
+    public void mkOperatTmpArtificials(int rowAffected, String operation) {
+        if (operation.equals("+")) {
+            for (int j = 0; j < this.Artificial[0].length; j++) {
+                //Hacemos la operacion solicitada
+                double aux = this.Artificial[rowAffected][j] + this.tmpArtificials[j];
+                //Actualizamos el valor de la posicion
+                this.Artificial[rowAffected][j] = aux;
+            }
+        }
+    }
+
+    public void mkOperatTmpSolution(int position, String operation) {
+        if (operation.equals("+")) {
+            double aux = (double) this.Solutions.get(position) + this.tmpSolution;
+            this.Solutions.set(position, aux);
+        }
     }
 
     /*
