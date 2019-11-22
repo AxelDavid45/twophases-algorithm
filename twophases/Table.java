@@ -130,7 +130,58 @@ public class Table {
             //Actualiza la fila con la operacion solicitada en la matriz de soluciones
             this.mkOperatSolutionsObjective(this.Solutions.size(), rowTmp, "+");
         }
+        //Encontramos nuestra variable de salida y de entrada
+        this.setEnteringColumn(1); //Encontrar variable para minimizar de entrada
+        this.setLeavingRow(); //Encontrar fila de salida
+        
+        //Seleccionamos el valor en la matriz de coeficientes que coincida con la posicon [enteringcolumn, leavingRow] y este sera la fila pivote y comprobar si este es igual a 1, si no multiplicar toda la fila por el inverso multiplicativo
+        if (this.MatrixArtificial[this.getLeavingRow()][this.getEnteringColumn()] != 1.0) {
+            System.out.println("El pivote no es 1");
+            //Procedemos a multiplicar toda la fila por el inverso del valor al valor de la matriz que queremos hacer pivote
+            this.mkRowPivot();
+            
+        } else {
+            System.out.println("El pivote  es 1");
+        }
+        
 
+    }
+    
+    public void mkRowPivot() {
+        //Guardamos el valor del pivote
+            double denominator = this.MatrixArtificial[this.getLeavingRow()][this.getEnteringColumn()];
+            //Realizamos la operacion con la matriz de coeficientes
+            for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
+                for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
+                    //Guardamos el valor temporal del numerador
+                    double numerator = this.MatrixArtificial[i][j];
+                    //Asignamos la division a la posicion actual
+                    this.MatrixArtificial[i][j] = numerator/denominator;
+                }
+            }
+            //Realizamos la operacion con la matriz de slacks
+            for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
+                for (int j = 0; j < this.Slacks[0].length; j++) {
+                    //Guardamos el valor temporal del numerador
+                    double numerator = this.Slacks[i][j];
+                    //Asignamos la division a la posicion actual
+                    this.Slacks[i][j] = numerator/denominator;
+                }
+            }
+            
+            //Realizamos la operacion con la matriz de artificiales
+            for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
+                for (int j = 0; j < this.Artificial[0].length; j++) {
+                    //Guardamos el valor temporal del numerador
+                    double numerator = this.Artificial[i][j];
+                    //Asignamos la division a la posicion actual
+                    this.Artificial[i][j] = numerator/denominator;
+                }
+            }
+            
+            //Realizamos la operacion con el arreglo de soluciones
+            double numerator = (double) this.Solutions.get(this.getLeavingRow() - 1);
+            this.Solutions.set(this.getLeavingRow() - 1, (numerator/denominator))
     }
 
     /*
@@ -250,8 +301,12 @@ public class Table {
                 numerator = (double) this.Solutions.get(indexSolutions);
                 //Guardamos el valor de la solucion como numerador para hacer la division
                 denominator = this.MatrixArtificial[i][j];
-                //Guardamos el resultado en el arreglo temporal para poder decidir cual sera la fila de salida
-                tmpResults[indexSolutions] = numerator / denominator;
+                if (denominator != 0)
+                    //Guardamos el resultado en el arreglo temporal para poder decidir cual sera la fila de salida
+                    tmpResults[indexSolutions] = numerator / denominator;
+                else 
+                    tmpResults[indexSolutions] = 0;
+                
                 //Aumentamos el indice para seguir recorriendo las soluciones
                 indexSolutions++;
             }
