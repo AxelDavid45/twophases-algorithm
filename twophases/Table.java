@@ -548,7 +548,6 @@ public class Table {
             if (tmpResults[i] < minimum && tmpResults[i] > 0 && minimum > 0) {
                 minimum = tmpResults[i];
                 position = i + 1;
-            
             }
             //Comprobamos para ver cual sera el resultado
             
