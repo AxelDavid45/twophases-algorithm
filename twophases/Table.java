@@ -117,6 +117,18 @@ public class Table {
         }
         return indexRows;
     }
+    
+    public boolean isStoppablePhase1() {
+        boolean stoppable = false;
+        for (int i = 1; i < 1; i++) {
+            for (int j = 0; j < this.Artificial[0].length; j++) {
+                if (this.Artificial[i][j] == -1) {
+                    stoppable = true;
+                }
+            }
+        }
+        return stoppable;
+    }
 
     //Comienza a realizar la fase 1 del metodo dos fases
     public void phase1() {
