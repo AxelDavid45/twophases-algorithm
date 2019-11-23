@@ -155,6 +155,54 @@ public class Table {
         //Una vez realizada la fila pivote, debemos de comprobar que los demas valores que se encuentren en la misma columna que nuestro elemento pivote(valor 1) sea igual a cero, si no debemos comenzar a realizar las sumas o restas correspondientes a cada fila
         //Guardamos en arreglos pequeños los elementos que pertenecen a la fila pivote
         //Comenzamos a llenar los arreglos temporales
+        //Llenamos los arreglos temporales con la primera iteracion
+        this.fillTmpsArrays();
+        
+        //Recorremos la columna buscando si es 0 o no, comenzamos desde la fila 0
+        for (int i = 0; i < this.MatrixArtificial.length; i++) {
+            if ((this.MatrixArtificial[i][this.getEnteringColumn()] != 0 && this.MatrixArtificial[i][this.getEnteringColumn()] > 0) && i != this.getLeavingRow()) {
+                //Procedemos a guardar el valor temporal para multiplicarlo
+                double tmpValue = (double) this.MatrixArtificial[i][this.getEnteringColumn()] * -1;
+                //Multiplicamos el valor por los arreglos temporales
+                System.out.println(tmpValue);
+                this.multiplyTmpCoeficients(tmpValue);
+                this.multiplyTmpSlacks(tmpValue);
+                this.multiplyTmpArtificials(tmpValue);
+                this.multiplyTmpSolution(tmpValue);
+                //Realizamos la suma de las filas en coeficientes
+                this.mkOperatTmpCoeficients(i, "+");
+//                //Realizamos la suma de las filas en slacks
+                this.mkOperatTmpSlacks(i, "+");
+//                //Realizamos la suma de las filas en artificiales
+                this.mkOperatTmpArtificials(i, "+");
+                //Realizamos la suma de las soluciones tmp y las que estan en el arreglo de soluciones
+                if (i == 0) 
+                    this.mkOperatTmpSolution(this.Solutions.size() - 1, "+");
+                else 
+                    this.mkOperatTmpSolution(i - 1, "+");
+                
+            }
+            
+            //Volvemos a llenar los arreglos para otra iteracion
+            this.fillTmpsArrays();
+        }
+
+        for (double i : tmpCoeficients) {
+            System.out.println("Valor coeficiente: " + i);
+        }
+
+        for (double i : tmpSlacks) {
+            System.out.println("Valor slacks: " + i);
+        }
+
+        for (double i : tmpArtificials) {
+            System.out.println("Valor artifial: " + i);
+        }
+        System.out.println("Valor solucion: " + this.tmpSolution);
+
+    }
+    
+    public void fillTmpsArrays() {
         //Llenamos el arreglo tmp con valores de la matriz de coeficientes
         for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
             for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
@@ -178,43 +226,6 @@ public class Table {
 
         //Guardamos el valor de tmpSolution
         this.tmpSolution = (double) this.Solutions.get(this.getLeavingRow() - 1);
-
-        //Recorremos la columna buscando si es 0 o no, comenzamos desde la fila 0
-        for (int i = 0; i < this.MatrixArtificial.length; i++) {
-            if (this.MatrixArtificial[i][this.getEnteringColumn()] != 0 && this.MatrixArtificial[i][this.getEnteringColumn()] > 0) {
-                //Procedemos a guardar el valor temporal para multiplicarlo
-                double tmpValue = (double) this.MatrixArtificial[i][this.getEnteringColumn()] * -1;
-                //Multiplicamos el valor por los arreglos temporales
-                System.out.println(tmpValue);
-                this.multiplyTmpCoeficients(tmpValue);
-                this.multiplyTmpSlacks(tmpValue);
-                this.multiplyTmpArtificials(tmpValue);
-                this.multiplyTmpSolution(tmpValue);
-                //Realizamos la suma de las filas en coeficientes
-                this.mkOperatTmpCoeficients(i, "+");
-//                //Realizamos la suma de las filas en slacks
-                this.mkOperatTmpSlacks(i, "+");
-//                //Realizamos la suma de las filas en artificiales
-                this.mkOperatTmpArtificials(i, "+");
-                //Realizamos la suma de las soluciones tmp y las que estan en el arreglo de soluciones
-                this.mkOperatTmpSolution(this.Solutions.size() - 1, "+");
-                
-                break;
-            }
-        }
-
-        for (double i : tmpCoeficients) {
-            System.out.println("Valor coeficiente: " + i);
-        }
-
-        for (double i : tmpSlacks) {
-            System.out.println("Valor slacks: " + i);
-        }
-
-        for (double i : tmpArtificials) {
-            System.out.println("Valor artifial: " + i);
-        }
-        System.out.println("Valor solucion: " + this.tmpSolution);
 
     }
 
