@@ -120,7 +120,7 @@ public class Table {
     
     public boolean isStoppablePhase1() {
         boolean stoppable = false;
-        for (int i = 1; i < 1; i++) {
+        for (int i = 0; i < 1; i++) {
             for (int j = 0; j < this.Artificial[0].length; j++) {
                 if (this.Artificial[i][j] == -1) {
                     stoppable = true;
@@ -153,7 +153,7 @@ public class Table {
             //Actualiza la fila con la operacion solicitada en la matriz de soluciones
             this.mkOperatSolutionsObjective(this.Solutions.size(), rowTmp, "+");
         }
-//        do {
+        do {
         //Encontramos nuestra variable de salida y de entrada
         this.setEnteringColumn(1); //Encontrar variable para minimizar de entrada
         this.setLeavingRow(); //Encontrar fila de salida
@@ -199,7 +199,7 @@ public class Table {
             //Volvemos a llenar los arreglos para otra iteracion
             this.fillTmpsArrays();
         }
-//        } while(!this.isStoppablePhase1());
+        } while(!this.isStoppablePhase1());
 
         for (double i : tmpCoeficients) {
             System.out.println("Valor coeficiente: " + i);
