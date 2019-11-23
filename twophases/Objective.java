@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public abstract class  Objective {
     ArrayList<Double> coeficients;
-    int typeOptimization; // Max = 1, Min = 2
+    int typeOptimization; // min = 1, max = 2
     boolean Stoppable;
     
     protected abstract void toStandard(double[] coeficients);

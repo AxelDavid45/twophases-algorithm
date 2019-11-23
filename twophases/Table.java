@@ -117,7 +117,7 @@ public class Table {
         }
         return indexRows;
     }
-    
+
     public boolean isStoppablePhase1() {
         boolean stoppable = false;
         for (int i = 0; i < 1; i++) {
@@ -129,7 +129,7 @@ public class Table {
         }
         return stoppable;
     }
-    
+
     public boolean hasInitialSolution() {
         return Double.valueOf(this.Solutions.lastElement().toString()) == 0 && this.isStoppablePhase1();
     }
@@ -158,68 +158,130 @@ public class Table {
             this.mkOperatSolutionsObjective(this.Solutions.size(), rowTmp, "+");
         }
         do {
-        //Encontramos nuestra variable de salida y de entrada
-        this.setEnteringColumn(1); //Encontrar variable para minimizar de entrada
-        this.setLeavingRow(); //Encontrar fila de salida
+            //Encontramos nuestra variable de salida y de entrada
+            this.setEnteringColumn(1); //Encontrar variable para minimizar de entrada
+            this.setLeavingRow(); //Encontrar fila de salida
 
-        //Seleccionamos el valor en la matriz de coeficientes que coincida con la posicon [enteringcolumn, leavingRow] y este sera la fila pivote y comprobar si este es igual a 1, si no multiplicar toda la fila por el inverso multiplicativo
-        if (this.MatrixArtificial[this.getLeavingRow()][this.getEnteringColumn()] != 1.0) {
-            //Hacemos la fila pivote, multiplicando por el inverso multiplicativo
-            this.mkRowPivot();
-        }
-        //Despues de realizar la fila pivote debemos de guardar el valor de la variable de entrada en el arreglo de finalSolutions.
-        this.finalSolutions[this.getEnteringColumn()] = (double) this.Solutions.get(this.getLeavingRow() - 1);
-        //Una vez realizada la fila pivote, debemos de comprobar que los demas valores que se encuentren en la misma columna que nuestro elemento pivote(valor 1) sea igual a cero, si no debemos comenzar a realizar las sumas o restas correspondientes a cada fila
-        //Guardamos en arreglos pequeños los elementos que pertenecen a la fila pivote
-        //Comenzamos a llenar los arreglos temporales
-        //Llenamos los arreglos temporales con la primera iteracion
-        this.fillTmpsArrays();
-        
-        //Recorremos la columna buscando si es 0 o no, comenzamos desde la fila 0
-        for (int i = 0; i < this.MatrixArtificial.length; i++) {
-            if ((this.MatrixArtificial[i][this.getEnteringColumn()] != 0 && this.MatrixArtificial[i][this.getEnteringColumn()] > 0) && i != this.getLeavingRow()) {
-                //Procedemos a guardar el valor temporal para multiplicarlo
-                double tmpValue = (double) this.MatrixArtificial[i][this.getEnteringColumn()] * -1;
-                //Multiplicamos el valor por los arreglos temporales
-                System.out.println(tmpValue);
-                this.multiplyTmpCoeficients(tmpValue);
-                this.multiplyTmpSlacks(tmpValue);
-                this.multiplyTmpArtificials(tmpValue);
-                this.multiplyTmpSolution(tmpValue);
-                //Realizamos la suma de las filas en coeficientes
-                this.mkOperatTmpCoeficients(i, "+");
-//                //Realizamos la suma de las filas en slacks
-                this.mkOperatTmpSlacks(i, "+");
-//                //Realizamos la suma de las filas en artificiales
-                this.mkOperatTmpArtificials(i, "+");
-                //Realizamos la suma de las soluciones tmp y las que estan en el arreglo de soluciones
-                if (i == 0) 
-                    this.mkOperatTmpSolution(this.Solutions.size() - 1, "+");
-                else 
-                    this.mkOperatTmpSolution(i - 1, "+");
-                
+            //Seleccionamos el valor en la matriz de coeficientes que coincida con la posicon [enteringcolumn, leavingRow] y este sera la fila pivote y comprobar si este es igual a 1, si no multiplicar toda la fila por el inverso multiplicativo
+            if (this.MatrixArtificial[this.getLeavingRow()][this.getEnteringColumn()] != 1.0) {
+                //Hacemos la fila pivote, multiplicando por el inverso multiplicativo
+                this.mkRowPivot();
             }
-            
-            //Volvemos a llenar los arreglos para otra iteracion
+            //Despues de realizar la fila pivote debemos de guardar el valor de la variable de entrada en el arreglo de finalSolutions.
+            this.finalSolutions[this.getEnteringColumn()] = (double) this.Solutions.get(this.getLeavingRow() - 1);
+            //Una vez realizada la fila pivote, debemos de comprobar que los demas valores que se encuentren en la misma columna que nuestro elemento pivote(valor 1) sea igual a cero, si no debemos comenzar a realizar las sumas o restas correspondientes a cada fila
+            //Guardamos en arreglos pequeños los elementos que pertenecen a la fila pivote
+            //Comenzamos a llenar los arreglos temporales
+            //Llenamos los arreglos temporales con la primera iteracion
             this.fillTmpsArrays();
-        }
-        } while(!this.isStoppablePhase1());
 
-        for (double i : tmpCoeficients) {
-            System.out.println("Valor coeficiente: " + i);
-        }
+            //Recorremos la columna buscando si es 0 o no, comenzamos desde la fila 0
+            for (int i = 0; i < this.MatrixArtificial.length; i++) {
+                if ((this.MatrixArtificial[i][this.getEnteringColumn()] != 0 && this.MatrixArtificial[i][this.getEnteringColumn()] > 0) && i != this.getLeavingRow()) {
+                    //Procedemos a guardar el valor temporal para multiplicarlo
+                    double tmpValue = (double) this.MatrixArtificial[i][this.getEnteringColumn()] * -1;
+                    //Multiplicamos el valor por los arreglos temporales
+                    System.out.println(tmpValue);
+                    this.multiplyTmpCoeficients(tmpValue);
+                    this.multiplyTmpSlacks(tmpValue);
+                    this.multiplyTmpArtificials(tmpValue);
+                    this.multiplyTmpSolution(tmpValue);
+                    //Realizamos la suma de las filas en coeficientes
+                    this.mkOperatTmpCoeficients(i, "+");
+//                //Realizamos la suma de las filas en slacks
+                    this.mkOperatTmpSlacks(i, "+");
+//                //Realizamos la suma de las filas en artificiales
+                    this.mkOperatTmpArtificials(i, "+");
+                    //Realizamos la suma de las soluciones tmp y las que estan en el arreglo de soluciones
+                    if (i == 0) {
+                        this.mkOperatTmpSolution(this.Solutions.size() - 1, "+");
+                    } else {
+                        this.mkOperatTmpSolution(i - 1, "+");
+                    }
 
-        for (double i : tmpSlacks) {
-            System.out.println("Valor slacks: " + i);
-        }
+                }
 
-        for (double i : tmpArtificials) {
-            System.out.println("Valor artifial: " + i);
-        }
-        System.out.println("Valor solucion: " + this.tmpSolution);
+                //Volvemos a llenar los arreglos para otra iteracion
+                this.fillTmpsArrays();
+            }
+        } while (!this.isStoppablePhase1());
 
     }
+
+    public void doSimplex() {
+//Creamos el tamano de los arreglos temporales
+        this.tmpCoeficients = new double[this.MatrixArtificial[0].length];
+        this.tmpSlacks = new double[this.Slacks[0].length];
+        this.tmpArtificials = new double[this.Artificial[0].length];
+
+//        do {
+            //Encontramos nuestra variable de salida y de entrada
+            this.setEnteringColumn(2);
+            this.setLeavingRow(); //Encontrar fila de salida
+
+            //Seleccionamos el valor en la matriz de coeficientes que coincida con la posicon [enteringcolumn, leavingRow] y este sera la fila pivote y comprobar si este es igual a 1, si no multiplicar toda la fila por el inverso multiplicativo
+            if (this.MatrixArtificial[this.getLeavingRow()][this.getEnteringColumn()] != 1.0) {
+                //Hacemos la fila pivote, multiplicando por el inverso multiplicativo
+                this.mkRowPivot();
+            }
+            //Despues de realizar la fila pivote debemos de guardar el valor de la variable de entrada en el arreglo de finalSolutions.
+            this.finalSolutions[this.getEnteringColumn()] = (double) this.Solutions.get(this.getLeavingRow() - 1);
+            //Una vez realizada la fila pivote, debemos de comprobar que los demas valores que se encuentren en la misma columna que nuestro elemento pivote(valor 1) sea igual a cero, si no debemos comenzar a realizar las sumas o restas correspondientes a cada fila
+            //Guardamos en arreglos pequeños los elementos que pertenecen a la fila pivote
+            //Comenzamos a llenar los arreglos temporales
+            //Llenamos los arreglos temporales con la primera iteracion
+            this.fillTmpsArrays();
+
+            //Recorremos la columna buscando si es 0 o no, comenzamos desde la fila 0
+            for (int i = 0; i < this.MatrixArtificial.length; i++) {
+                if ((this.MatrixArtificial[i][this.getEnteringColumn()] != 0 && this.MatrixArtificial[i][this.getEnteringColumn()] > 0) && i != this.getLeavingRow()) {
+                    //Procedemos a guardar el valor temporal para multiplicarlo
+                    double tmpValue = (double) this.MatrixArtificial[i][this.getEnteringColumn()] * -1;
+                    //Multiplicamos el valor por los arreglos temporales
+                    this.multiplyTmpCoeficients(tmpValue);
+                    this.multiplyTmpSlacks(tmpValue);
+                    this.multiplyTmpArtificials(tmpValue);
+                    this.multiplyTmpSolution(tmpValue);
+                    //Realizamos la suma de las filas en coeficientes
+                    this.mkOperatTmpCoeficients(i, "+");
+//                //Realizamos la suma de las filas en slacks
+                    this.mkOperatTmpSlacks(i, "+");
+//                //Realizamos la suma de las filas en artificiales
+                    this.mkOperatTmpArtificials(i, "+");
+                    //Realizamos la suma de las soluciones tmp y las que estan en el arreglo de soluciones
+                    if (i == 0) {
+                        this.mkOperatTmpSolution(this.Solutions.size() - 1, "+");
+                    } else {
+                        this.mkOperatTmpSolution(i - 1, "+");
+                    }
+
+                }
+
+                //Volvemos a llenar los arreglos para otra iteracion
+                this.fillTmpsArrays();
+            }
+//        } while (this.isStoppableSimplex(this.ZObjective.typeOptimization));
+    }
     
+    public boolean isStoppableSimplex(int type) {
+        boolean stoppable = false;
+        if (type == 1) //Minimizar
+        {
+            
+        }
+        //Maximizar
+        if (type == 2) {
+            //se detiene cuando ya no hay ningun elemento negativo para maximizar en la fila objetivo
+            for(int i = 0; i < 1; i++) {
+                for (int j = 0; j < this.MatrixArtificial[0].length; j ++) {
+                    if (this.MatrixArtificial[i][j] >= 0 ) {
+                        stoppable = true;
+                    }
+                }
+            }
+        }
+        return stoppable;
+    }
     public void fillTmpsArrays() {
         //Llenamos el arreglo tmp con valores de la matriz de coeficientes
         for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
@@ -434,11 +496,11 @@ public class Table {
                 }
             }
         } else if (type == 2) { //Maximizar
-            //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas positivo
+            //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas negativo
             for (int i = 0; i < 1; i++) {
                 for (int j = 1; j < this.MatrixArtificial[0].length; j++) {
                     if (this.MatrixArtificial[i][j] < minimum && this.MatrixArtificial[i][j] < 0 && minimum < 0) {
-                        maximum = this.MatrixArtificial[i][j]; //nuevo maximo
+                        minimum = this.MatrixArtificial[i][j]; //nuevo maximo
                         position = j; //Posicion columna
                     }
                 }
@@ -475,8 +537,9 @@ public class Table {
                 indexSolutions++;
             }
         }
-        for(double i: tmpResults) {
-            System.out.println("resultados division: " + i);
+        
+        for (double i: tmpResults) {
+            System.out.println("Resultados division: " + i);
         }
         //Una vez hecha la division debemos de seleccionar la fila con el menor resultado positivo, la fila se seleccionara diciendo que la posicion de la solucion + 1 para encontrar el valor en las filas de las matrices artificial, coeficientes y slacks
         // Valor auxiliar para hacer las comparaciones
@@ -548,35 +611,31 @@ public class Table {
             }
         }
     }
-    
+
     public void replaceZObjective() {
         //Remplazar los valores en la matriz de coeficientes
-        for (int i = 0; i< 1; i++) {
+        for (int i = 0; i < 1; i++) {
             for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
                 this.MatrixArtificial[i][j] = this.ZObjective.coeficients.get(j);
             }
         }
-        
+
         //Llenamos con ceros las demas posiciones
         //Matriz de slacks
-        for (int i = 0; i< 1; i++) {
+        for (int i = 0; i < 1; i++) {
             for (int j = 0; j < this.Slacks[0].length; j++) {
                 this.Slacks[i][j] = 0;
             }
         }
-        
+
         //Matriz de artificial
-        for (int i = 0; i< 1; i++) {
+        for (int i = 0; i < 1; i++) {
             for (int j = 0; j < this.Artificial[0].length; j++) {
                 this.Artificial[i][j] = 0;
             }
         }
         //Arreglo de soluciones
         this.Solutions.set(this.Solutions.size() - 1, (double) 0);
-        
-    }
-
-    public void doSimplex(boolean type) {
 
     }
 
