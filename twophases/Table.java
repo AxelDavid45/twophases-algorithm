@@ -153,6 +153,7 @@ public class Table {
             //Actualiza la fila con la operacion solicitada en la matriz de soluciones
             this.mkOperatSolutionsObjective(this.Solutions.size(), rowTmp, "+");
         }
+//        do {
         //Encontramos nuestra variable de salida y de entrada
         this.setEnteringColumn(1); //Encontrar variable para minimizar de entrada
         this.setLeavingRow(); //Encontrar fila de salida
@@ -198,6 +199,7 @@ public class Table {
             //Volvemos a llenar los arreglos para otra iteracion
             this.fillTmpsArrays();
         }
+//        } while(!this.isStoppablePhase1());
 
         for (double i : tmpCoeficients) {
             System.out.println("Valor coeficiente: " + i);
@@ -469,6 +471,9 @@ public class Table {
                 indexSolutions++;
             }
         }
+        for(double i: tmpResults) {
+            System.out.println("resultados division: " + i);
+        }
         //Una vez hecha la division debemos de seleccionar la fila con el menor resultado positivo, la fila se seleccionara diciendo que la posicion de la solucion + 1 para encontrar el valor en las filas de las matrices artificial, coeficientes y slacks
         // Valor auxiliar para hacer las comparaciones
         double minimum = tmpResults[0];
@@ -479,6 +484,9 @@ public class Table {
                 minimum = tmpResults[i];
                 position = i + 1;
             }
+        }
+        if (position == 0) {
+            position += 1;
         }
         //Asignamos el valor obtenido del menor positivo
         this.leavingRow = position;
