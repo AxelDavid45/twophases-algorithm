@@ -180,8 +180,7 @@ public class Table {
                 if ((this.MatrixArtificial[i][this.getEnteringColumn()] != 0 && this.MatrixArtificial[i][this.getEnteringColumn()] > 0) && i != this.getLeavingRow()) {
                     //Procedemos a guardar el valor temporal para multiplicarlo
                     double tmpValue = (double) this.MatrixArtificial[i][this.getEnteringColumn()] * -1;
-                    //Multiplicamos el valor por los arreglos temporales
-                    System.out.println(tmpValue);
+
                     this.multiplyTmpCoeficients(tmpValue);
                     this.multiplyTmpSlacks(tmpValue);
                     this.multiplyTmpArtificials(tmpValue);
@@ -546,11 +545,13 @@ public class Table {
         double minimum = tmpResults[0];
         int position = 0;
         for (int i = 0; i < tmpResults.length; i++) {
-            //Comprobamos para ver cual sera el resultado
             if (tmpResults[i] < minimum && tmpResults[i] > 0 && minimum > 0) {
                 minimum = tmpResults[i];
                 position = i + 1;
+            
             }
+            //Comprobamos para ver cual sera el resultado
+            
         }
         if (position == 0) {
             position += 1;
