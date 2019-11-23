@@ -129,6 +129,10 @@ public class Table {
         }
         return stoppable;
     }
+    
+    public boolean hasInitialSolution() {
+        return Double.valueOf(this.Solutions.lastElement().toString()) == 0 && this.isStoppablePhase1();
+    }
 
     //Comienza a realizar la fase 1 del metodo dos fases
     public void phase1() {
