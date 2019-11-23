@@ -548,6 +548,33 @@ public class Table {
             }
         }
     }
+    
+    public void replaceZObjective() {
+        //Remplazar los valores en la matriz de coeficientes
+        for (int i = 0; i< 1; i++) {
+            for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
+                this.MatrixArtificial[i][j] = this.ZObjective.coeficients.get(j);
+            }
+        }
+        
+        //Llenamos con ceros las demas posiciones
+        //Matriz de slacks
+        for (int i = 0; i< 1; i++) {
+            for (int j = 0; j < this.Slacks[0].length; j++) {
+                this.Slacks[i][j] = 0;
+            }
+        }
+        
+        //Matriz de artificial
+        for (int i = 0; i< 1; i++) {
+            for (int j = 0; j < this.Artificial[0].length; j++) {
+                this.Artificial[i][j] = 0;
+            }
+        }
+        //Arreglo de soluciones
+        this.Solutions.set(this.Solutions.size() - 1, (double) 0);
+        
+    }
 
     public void doSimplex(boolean type) {
 
