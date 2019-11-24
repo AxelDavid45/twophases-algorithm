@@ -3,7 +3,6 @@ package twophases;
 import java.util.Vector;
 
 public class Table {
-
     double[][] MatrixArtificial;//Matriz de coeficientes de las varibles del problema
     double[][] Slacks;
     double[][] Artificial;
