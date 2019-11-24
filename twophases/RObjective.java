@@ -21,24 +21,6 @@ public class RObjective extends Objective {
     protected void updateIndex(double value, int index) {
         this.coeficients.set(index, value);
     }
-    
-    /*
-        Determina cuando la funcion objetivo vuelve a ser -1, si cualquiera de los elementos es diferente a -1 
-        no puede ser detenible
-    */
-    public boolean isStoppable() {
-        //Recorremos los coeficientes para saber si son diferentes a -1 y seguir con el algoritmo
-        for(int i = 0; i < (this.coeficients.size()-1); i++)
-           if(coeficients.get(i) != -1)
-               this.Stoppable = false;
-        return this.Stoppable;
-    }
-    
-    //Si los coeficientes no son iguales a -1 y la solucion no es igual a 0  no tiene solucion
-    public boolean hasInitialSolution() {
-        return this.coeficients.get(this.coeficients.size()-1) == 0 && this.isStoppable();
-          
-    }
 
     @Override
     protected void toStandard(double[] coeficients) { }

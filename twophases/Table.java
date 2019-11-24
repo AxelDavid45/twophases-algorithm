@@ -4,7 +4,6 @@ import java.util.Vector;
 
 public class Table {
 
-    double[][] Matrix; //Contiene los datos para hacer iteraciones
     double[][] MatrixArtificial;//Matriz de coeficientes de las varibles del problema
     double[][] Slacks;
     double[][] Artificial;
@@ -614,13 +613,6 @@ public class Table {
         // Valor auxiliar para hacer las comparaciones
         double minimum = tmpResults[0];
         int position = 1;
-//        for (int i = 0; i < tmpResults.length; i++) {
-//            if (minimum > 0) {
-//                if (tmpResults[i] <= minimum && tmpResults[i] != 0) {
-//                    minimum = tmpResults[i];
-//                    position += 1;
-//                }
-//            }
 
         for (int i = 0; i < tmpResults.length; i++) {
             if (tmpResults[i] < minimum) {
@@ -629,54 +621,10 @@ public class Table {
             }
         }
 
-        //Comprobamos para ver cual sera el resultado
-//        if (position == 0) {
-//            position += 1;
-//        }
         //Asignamos el valor obtenido del menor positivo
         this.leavingRow = position;
     }
 
-    public void buildMatrix() {
-        //Asignamos el tamano de nuestra matriz usando la siguiente regla
-        //Las columnas seran de acuerdo al numero de coeficientes que tenga la funcion Z + vArtifiales + VSlack + 1, 1 que sera la columna de soluciones
-        //Las filas sera el numero de restricciones + 1, donde 1 es la Objective
-        this.setnRows(this.Constraints.length + 1);
-        this.setnColumns(this.ZObjective.numberCoeficients() + this.nArtificial + this.nSlack + 1);
-        this.Matrix = new double[this.getnRows()][this.getnColumns()];
-        //Como de principio Objective no cuenta con valores en las columnas de vSlack o VArtificial agregamos valor 0
-        for (int i = 0; i < 1; i++) {
-            for (int j = this.ZObjective.numberCoeficients(); j < nColumns; j++) {
-                this.ZObjective.coeficients.add((double) 0);
-            }
-        }
-
-        //Introducimos la fObjective Z por default
-        for (int i = 0; i < 1; i++) {
-            for (int j = 0; j < this.getnColumns(); j++) {
-                this.Matrix[i][j] = this.ZObjective.coeficients.get(j);
-            }
-        }
-        //Variable auxiliar que contiene el # de coeficientes de la restriccion
-        int counterCoeficients = this.Constraints[0].getNumberCoeficients();
-        int indexConstraint = 0, IndexConstraints = 0;
-        //Llenamos la matriz con los datos que ya tenemos comenzando una fila abajo
-        for (int i = 1; i <= this.getnRows() - 1; i++) {
-            for (int j = 0; j < this.getnColumns(); j++) {
-                //Comprueba que no rebasemos el limite de elementos de las constraints
-                if (indexConstraint < counterCoeficients) {
-                    this.Matrix[i][j] = this.Constraints[IndexConstraints].Coeficients[indexConstraint];
-                } else {
-                    //Comprobamos si hemos alcanzado la col de soluciones e insertamos la sol de cada constraint
-                    this.Matrix[i][this.getnColumns() - 1] = this.Constraints[IndexConstraints].getSolution();
-                }
-                indexConstraint++; //Aumentamos el indice para ir cambiando de coeficiente
-            }
-            indexConstraint = 0; //Reseteamos el indice para la siguiente restriccion
-            IndexConstraints++; //Aumentamos la posicion del indice para recorrer el array restricciones
-        }
-
-    }
 
     /*
         Metodo que remplaza la funcion objecito z o r dependiendo
@@ -713,18 +661,6 @@ public class Table {
         }
         //Arreglo de soluciones
         this.Solutions.set(this.Solutions.size() - 1, (double) 0);
-
-    }
-
-    public void updateTable() {
-
-    }
-
-    public void isTie() {
-
-    }
-
-    public void isThereSolution() {
 
     }
 
