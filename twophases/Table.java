@@ -163,7 +163,7 @@ public class Table {
             this.setLeavingRow(); //Encontrar fila de salida
 
             //Seleccionamos el valor en la matriz de coeficientes que coincida con la posicon [enteringcolumn, leavingRow] y este sera la fila pivote y comprobar si este es igual a 1, si no multiplicar toda la fila por el inverso multiplicativo
-            if (this.MatrixArtificial[this.getLeavingRow()][this.getEnteringColumn()] != 1.0) {
+            if (this.MatrixArtificial[this.getLeavingRow() - 1][this.getEnteringColumn()] != 1.0) {
                 //Hacemos la fila pivote, multiplicando por el inverso multiplicativo
                 this.mkRowPivot(false);
             }
@@ -219,12 +219,12 @@ public class Table {
             this.setLeavingRow(); //Encontrar fila de salida
 
             //Seleccionamos el valor en la matriz de coeficientes que coincida con la posicon [enteringcolumn, leavingRow] y este sera la fila pivote y comprobar si este es igual a 1, si no multiplicar toda la fila por el inverso multiplicativo
-            if (this.MatrixArtificial[this.getLeavingRow() + 1][this.getEnteringColumn()] != 1.0) {
+            if (this.MatrixArtificial[this.getLeavingRow()][this.getEnteringColumn()] != 1.0) {
                 //Hacemos la fila pivote, multiplicando por el inverso multiplicativo
                 this.mkRowPivot(true);
             }
             //Despues de realizar la fila pivote debemos de guardar el valor de la variable de entrada en el arreglo de finalSolutions.
-            this.finalSolutions[this.getEnteringColumn()] = (double) this.Solutions.get(this.getLeavingRow());
+            this.finalSolutions[this.getEnteringColumn()] = (double) this.Solutions.get(this.getLeavingRow() - 1);
             //Una vez realizada la fila pivote, debemos de comprobar que los demas valores que se encuentren en la misma columna que nuestro elemento pivote(valor 1) sea igual a cero, si no debemos comenzar a realizar las sumas o restas correspondientes a cada fila
             //Guardamos en arreglos pequeños los elementos que pertenecen a la fila pivote
             //Comenzamos a llenar los arreglos temporales
@@ -233,7 +233,7 @@ public class Table {
 
             //Recorremos la columna buscando si es 0 o no, comenzamos desde la fila 0
             for (int i = 0; i < this.MatrixArtificial.length; i++) {
-                if ((this.MatrixArtificial[i][this.getEnteringColumn()] != 0 && this.MatrixArtificial[i][this.getEnteringColumn()] < 0 || this.MatrixArtificial[i][this.getEnteringColumn()] > 0) && i != this.getLeavingRow() + 1) {
+                if ((this.MatrixArtificial[i][this.getEnteringColumn()] != 0 && this.MatrixArtificial[i][this.getEnteringColumn()] < 0 || this.MatrixArtificial[i][this.getEnteringColumn()] > 0) && i != this.getLeavingRow()) {
                     //Procedemos a guardar el valor temporal para multiplicarlo
                     double tmpValue = (double) this.MatrixArtificial[i][this.getEnteringColumn()] * -1;
                     //Multiplicamos el valor por los arreglos temporales
@@ -259,7 +259,7 @@ public class Table {
                 //Volvemos a llenar los arreglos para otra iteracion
                 this.fillTmpsArrays(true);
             }
-        } while (this.isStoppableSimplex(this.ZObjective.typeOptimization));
+        } while (!this.isStoppableSimplex(this.ZObjective.typeOptimization));
     }
 
     public boolean isStoppableSimplex(int type) {
@@ -309,28 +309,28 @@ public class Table {
             this.tmpSolution = (double) this.Solutions.get(this.getLeavingRow() - 1);
         } else {
             //Llenamos el arreglo tmp con valores de la matriz de coeficientes
-            for (int i = this.getLeavingRow() + 1; i < this.getLeavingRow() + 2; i++) {
+            for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
                 for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
                     this.tmpCoeficients[j] = (double) this.MatrixArtificial[i][j];
                 }
             }
 
             //Llenamos el arreglo tmp con valores de la matriz de slacks
-            for (int i = this.getLeavingRow() + 1; i < this.getLeavingRow() + 2; i++) {
+            for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
                 for (int j = 0; j < this.Slacks[0].length; j++) {
                     this.tmpSlacks[j] = (double) this.Slacks[i][j];
                 }
             }
 
             //Llenamos el arreglo tmp con valores de la matriz artificiales
-            for (int i = this.getLeavingRow() + 1; i < this.getLeavingRow() + 2; i++) {
+            for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
                 for (int j = 0; j < this.Artificial[0].length; j++) {
                     this.tmpArtificials[j] = (double) this.Artificial[i][j];
                 }
             }
 
             //Guardamos el valor de tmpSolution
-            this.tmpSolution = (double) this.Solutions.get(this.getLeavingRow());
+            this.tmpSolution = (double) this.Solutions.get(this.getLeavingRow() - 1);
         }
 
     }
@@ -395,9 +395,9 @@ public class Table {
             this.Solutions.set(this.getLeavingRow() - 1, (numerator / denominator));
         } else {
             //Guardamos el valor del pivote
-            double denominator = this.MatrixArtificial[this.getLeavingRow() + 1][this.getEnteringColumn()];
+            double denominator = this.MatrixArtificial[this.getLeavingRow()][this.getEnteringColumn()];
             //Realizamos la operacion con la matriz de coeficientes
-            for (int i = this.getLeavingRow() + 1; i < this.getLeavingRow() + 2; i++) {
+            for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
                 for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
                     //Guardamos el valor temporal del numerador
                     double numerator = this.MatrixArtificial[i][j];
@@ -406,7 +406,7 @@ public class Table {
                 }
             }
             //Realizamos la operacion con la matriz de slacks
-            for (int i = this.getLeavingRow() + 1; i < this.getLeavingRow() + 2; i++) {
+            for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
                 for (int j = 0; j < this.Slacks[0].length; j++) {
                     //Guardamos el valor temporal del numerador
                     double numerator = this.Slacks[i][j];
@@ -416,7 +416,7 @@ public class Table {
             }
 
             //Realizamos la operacion con la matriz de artificiales
-            for (int i = this.getLeavingRow() + 1; i < this.getLeavingRow() + 2; i++) {
+            for (int i = this.getLeavingRow(); i < this.getLeavingRow() + 1; i++) {
                 for (int j = 0; j < this.Artificial[0].length; j++) {
                     //Guardamos el valor temporal del numerador
                     double numerator = this.Artificial[i][j];
@@ -426,8 +426,8 @@ public class Table {
             }
 
             //Realizamos la operacion con el arreglo de soluciones
-            double numerator = (double) this.Solutions.get(this.getLeavingRow());
-            this.Solutions.set(this.getLeavingRow(), (numerator / denominator));
+            double numerator = (double) this.Solutions.get(this.getLeavingRow() - 1);
+            this.Solutions.set(this.getLeavingRow() - 1, (numerator / denominator));
         }
     }
 
@@ -562,7 +562,7 @@ public class Table {
             //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas negativo
             for (int i = 0; i < 1; i++) {
                 for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
-                    if (this.MatrixArtificial[i][j] <= minimum && this.MatrixArtificial[i][j] < 0 && minimum < 0) {
+                    if (this.MatrixArtificial[i][j] < minimum && this.MatrixArtificial[i][j] < 0) {
                         minimum = this.MatrixArtificial[i][j]; //nuevo maximo
                         position = j; //Posicion columna
                     }
@@ -591,9 +591,13 @@ public class Table {
                 denominator = this.MatrixArtificial[i][j];
                 if (denominator != 0) //Guardamos el resultado en el arreglo temporal para poder decidir cual sera la fila de salida
                 {
-                    tmpResults[indexSolutions] = numerator / denominator;
+                    if (numerator != 0) {
+                        tmpResults[indexSolutions] = numerator / denominator;
+                    } else {
+                        tmpResults[indexSolutions] = 1000000.00;//Numero gigante     
+                    }
                 } else {
-                    tmpResults[indexSolutions] = 0;
+                    tmpResults[indexSolutions] = 1000000.00;//Numero gigante 
                 }
 
                 //Aumentamos el indice para seguir recorriendo las soluciones
@@ -607,7 +611,7 @@ public class Table {
         //Una vez hecha la division debemos de seleccionar la fila con el menor resultado positivo, la fila se seleccionara diciendo que la posicion de la solucion + 1 para encontrar el valor en las filas de las matrices artificial, coeficientes y slacks
         // Valor auxiliar para hacer las comparaciones
         double minimum = tmpResults[0];
-        int position = 0;
+        int position = 1;
 //        for (int i = 0; i < tmpResults.length; i++) {
 //            if (minimum > 0) {
 //                if (tmpResults[i] <= minimum && tmpResults[i] != 0) {
@@ -615,13 +619,11 @@ public class Table {
 //                    position += 1;
 //                }
 //            }
+
         for (int i = 0; i < tmpResults.length; i++) {
-            if (minimum == 0) {
-                minimum = tmpResults[i + 1];
-            }
-            if (tmpResults[i] <= minimum && tmpResults[i] != 0) {
+            if (tmpResults[i] < minimum) {
                 minimum = tmpResults[i];
-                position += 1;
+                position = i + 1;
             }
         }
 
