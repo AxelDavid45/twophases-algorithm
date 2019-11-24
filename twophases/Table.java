@@ -270,13 +270,15 @@ public class Table {
         }
         //Maximizar
         if (type == 2) {
+            double suma = 0;
             //se detiene cuando ya no hay ningun elemento negativo para maximizar en la fila objetivo
             for (int i = 0; i < 1; i++) {
                 for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
-                    if (this.MatrixArtificial[i][j] >= 0) {
-                        stoppable = true;
-                    }
+                    suma += this.MatrixArtificial[i][j];
                 }
+            }
+            if (suma >= 0) {
+                stoppable = true;
             }
         }
         return stoppable;
