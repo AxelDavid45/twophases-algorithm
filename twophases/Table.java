@@ -552,7 +552,7 @@ public class Table {
             for (int i = 0; i < 1; i++) {
                 for (int j = 1; j < this.MatrixArtificial[0].length; j++) {
                     //Comprobamos que todo sea mayor a cero para que nos de el numero mas positivo
-                    if (this.MatrixArtificial[i][j] > maximum && this.MatrixArtificial[i][j] > 0 && maximum > 0) {
+                    if (this.MatrixArtificial[i][j] > maximum && this.MatrixArtificial[i][j] > 0) {
                         maximum = this.MatrixArtificial[i][j]; //nuevo maximo
                         position = j; //Posicion columna
                     }
