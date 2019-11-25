@@ -264,7 +264,7 @@ public class Table {
         boolean stoppable = false;
         if (type == 1) //Minimizar
         {
-            //Comenzamos condicion de parada simplex
+            //Comenzamos condicion de parada simplex minimizar
         }
         //Maximizar
         if (type == 2) {
