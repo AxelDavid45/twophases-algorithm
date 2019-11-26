@@ -276,6 +276,7 @@ public class Table {
                 this.fillTmpsArrays(true);
             }
 
+            //Antes de moverle a las soluciones finales
             //Hacemos una comprobacion de fila, si la fila que vamos a meter ya estaba asignada a una solucion, ahora la sol en la matriz de sol finales sera 0, si no se encuentra insertamos el valor
             //Despues de realizar el proceso completo debemos de guardar el valor de la variable de entrada en el arreglo de finalSolutions.
             if (this.finalSolutionsWRow[1][this.getEnteringColumn()] == this.getLeavingRow()) {

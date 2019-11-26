@@ -57,19 +57,26 @@ public class Implementation {
                         System.out.print("X" + (j + 1) + ": ");
                         coeficients[j] = in.nextDouble();
                     }
-                    System.out.println("Selecciona el tipo de desigualdad o igualdad: >=  #1 ||<= #2 || = #3");
-                    int option = in.nextInt();
-                    switch (option) {
-                        case 1:
-                            operator = ">";
-                            break;
-                        case 2:
-                            operator = "<";
-                            break;
-                        case 3:
-                            operator = "=";
-                            break;
-                    }
+                    do {
+                        if(operator.equals("x"))
+                            System.out.println("Incorrecto, introduce el dato nuevamente");
+                        System.out.println("Selecciona el tipo de desigualdad o igualdad: >=  #1 ||<= #2 || = #3");
+                        int option = in.nextInt();
+                        switch (option) {
+                            case 1:
+                                operator = ">";
+                                break;
+                            case 2:
+                                operator = "<";
+                                break;
+                            case 3:
+                                operator = "=";
+                                break;
+                            default:
+                                operator = "x";
+                                break;
+                        }
+                    } while (operator.equals("x"));
                     System.out.print("Ingresa el valor del termino independiente de la restriccion: ");
                     solution = in.nextDouble();
                     //Creamos la restriccion
@@ -116,13 +123,12 @@ public class Implementation {
                 Implementation.printSlacks(table);
                 Implementation.printArtificials(table);
                 Implementation.printSolutions(table);
-           
 
-            Implementation.printFinalSolutions(table);
-             } else {
+                Implementation.printFinalSolutions(table);
+            } else {
                 System.out.println("INGRESA UN PROBLEMA CON VARIABLES ARTIFICIALES");
             }
-            
+
             System.out.println("¿Deseas repetir el programa? SI = 1 || NO = 2");
         } while (answer == 1);
         System.exit(0);
