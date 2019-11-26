@@ -213,7 +213,7 @@ public class Table {
 
         do {
             //Encontramos nuestra variable de salida y de entrada
-            this.setEnteringColumn(2);
+            this.setEnteringColumn(this.ZObjective.typeOptimization);
             this.setLeavingRow(); //Encontrar fila de salida
 
             //Seleccionamos el valor en la matriz de coeficientes que coincida con la posicon [enteringcolumn, leavingRow] y este sera la fila pivote y comprobar si este es igual a 1, si no multiplicar toda la fila por el inverso multiplicativo
@@ -264,7 +264,15 @@ public class Table {
         boolean stoppable = false;
         if (type == 1) //Minimizar
         {
-            //Comenzamos condicion de parada simplex minimizar
+            double suma = 0;
+            for (int i = 0; i < 1; i++) {
+                for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
+                    suma += this.MatrixArtificial[i][j];
+                }
+            }
+            if (suma <= 0) {
+                stoppable = true;
+            }
         }
         //Maximizar
         if (type == 2) {
