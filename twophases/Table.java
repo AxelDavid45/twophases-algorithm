@@ -621,7 +621,7 @@ public class Table {
 
         for (double i : tmpResults) {
             System.out.println("Resultados division: " + i);
-        }
+        } //
         //Una vez hecha la division debemos de seleccionar la fila con el menor resultado positivo, la fila se seleccionara diciendo que la posicion de la solucion + 1 para encontrar el valor en las filas de las matrices artificial, coeficientes y slacks
         // Valor auxiliar para hacer las comparaciones
         double minimum = tmpResults[0];
