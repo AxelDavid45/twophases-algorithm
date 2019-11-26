@@ -7,7 +7,7 @@ public class Constraint {
     double[] vArtificials = new double[1], vSlacks = new double[1];
     double solution;
     //Construimos nuestra restriccion
-    public Constraint(double[] coeficients, String operator, double solution) {
+public Constraint(double[] coeficients, String operator, double solution) {
         this.Operator = operator;
         //Guardamos el ultimo elemento de la restriccion para usarla mas adelante en clase tabla
         this.solution = (double) solution;

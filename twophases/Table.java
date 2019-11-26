@@ -227,6 +227,8 @@ public class Table {
         this.tmpSlacks = new double[this.Slacks[0].length];
         this.tmpArtificials = new double[this.Artificial[0].length];
 
+        //Remplaza la funcion R por Z
+        this.replaceZObjective();
         do {
             //Encontramos nuestra variable de salida y de entrada
             this.setEnteringColumn(this.ZObjective.typeOptimization);
