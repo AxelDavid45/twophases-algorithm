@@ -3,10 +3,12 @@ package twophases;
 import java.util.Vector;
 
 public class Table {
+
     double[][] MatrixArtificial;//Matriz de coeficientes de las varibles del problema
     double[][] Slacks;
     double[][] Artificial;
     //Final solutions con informacion de fila
+    double[][] finalSolutionsWRow;
     double[] finalSolutions;
     Vector Solutions; //Contiene las soluciones de cada fila el ultimo elemento es la sol de R o Z
     Constraint[] Constraints; //Contiene las restricciones
@@ -23,6 +25,8 @@ public class Table {
     public Table(Constraint[] constraints, Objective fObjective) {
         //Inicializamos el arreglo solutions de tamano constraints + 1 donde 1 es la Objective Z o R
         this.Solutions = new Vector(constraints.length + 1);
+        //Creamos la matriz de soluciones con informacion de la fila
+        this.finalSolutionsWRow = new double[2][fObjective.coeficients.size()];
         //Le asignamos el tamano al arreglo que servira para almacenar las soluciones finales
         this.finalSolutions = new double[fObjective.coeficients.size()];
         //Recorremos el array y contabilizamos cuantas varibles de holgura o artificales tenemos
@@ -166,8 +170,7 @@ public class Table {
                 //Hacemos la fila pivote, multiplicando por el inverso multiplicativo
                 this.mkRowPivot(false);
             }
-            //Despues de realizar la fila pivote debemos de guardar el valor de la variable de entrada en el arreglo de finalSolutions.
-            this.finalSolutions[this.getEnteringColumn()] = (double) this.Solutions.get(this.getLeavingRow() - 1);
+
             //Una vez realizada la fila pivote, debemos de comprobar que los demas valores que se encuentren en la misma columna que nuestro elemento pivote(valor 1) sea igual a cero, si no debemos comenzar a realizar las sumas o restas correspondientes a cada fila
             //Guardamos en arreglos pequeños los elementos que pertenecen a la fila pivote
             //Comenzamos a llenar los arreglos temporales
@@ -202,6 +205,18 @@ public class Table {
                 //Volvemos a llenar los arreglos para otra iteracion
                 this.fillTmpsArrays(false);
             }
+            
+            //Hacemos una comprobacion de fila, si la fila que vamos a meter ya estaba asignada a una solucion, ahora la sol en la matriz de sol finales sera 0, si no se encuentra insertamos el valor
+            //Despues de realizar el proceso completo debemos de guardar el valor de la variable de entrada en el arreglo de finalSolutions.
+            if (this.finalSolutionsWRow[1][this.getEnteringColumn()] == this.getLeavingRow()) {
+                this.finalSolutionsWRow[0][this.getEnteringColumn()] = 0;
+                this.finalSolutionsWRow[1][this.getEnteringColumn()] = this.getLeavingRow();
+
+            } else {
+                this.finalSolutionsWRow[0][this.getEnteringColumn()] = (double) this.Solutions.get(this.getLeavingRow() - 1);
+                this.finalSolutionsWRow[1][this.getEnteringColumn()] = this.getLeavingRow();
+            }
+
         } while (!this.isStoppablePhase1());
 
     }
@@ -222,8 +237,6 @@ public class Table {
                 //Hacemos la fila pivote, multiplicando por el inverso multiplicativo
                 this.mkRowPivot(true);
             }
-            //Despues de realizar la fila pivote debemos de guardar el valor de la variable de entrada en el arreglo de finalSolutions.
-            this.finalSolutions[this.getEnteringColumn()] = (double) this.Solutions.get(this.getLeavingRow() - 1);
             //Una vez realizada la fila pivote, debemos de comprobar que los demas valores que se encuentren en la misma columna que nuestro elemento pivote(valor 1) sea igual a cero, si no debemos comenzar a realizar las sumas o restas correspondientes a cada fila
             //Guardamos en arreglos pequeños los elementos que pertenecen a la fila pivote
             //Comenzamos a llenar los arreglos temporales
@@ -258,6 +271,18 @@ public class Table {
                 //Volvemos a llenar los arreglos para otra iteracion
                 this.fillTmpsArrays(true);
             }
+
+            //Hacemos una comprobacion de fila, si la fila que vamos a meter ya estaba asignada a una solucion, ahora la sol en la matriz de sol finales sera 0, si no se encuentra insertamos el valor
+            //Despues de realizar el proceso completo debemos de guardar el valor de la variable de entrada en el arreglo de finalSolutions.
+            if (this.finalSolutionsWRow[1][this.getEnteringColumn()] == this.getLeavingRow()) {
+                this.finalSolutionsWRow[0][this.getEnteringColumn()] = 0;
+                this.finalSolutionsWRow[1][this.getEnteringColumn()] = this.getLeavingRow();
+
+            } else {
+                this.finalSolutionsWRow[0][this.getEnteringColumn()] = (double) this.Solutions.get(this.getLeavingRow() - 1);
+                this.finalSolutionsWRow[1][this.getEnteringColumn()] = this.getLeavingRow();
+            }
+
         } while (!this.isStoppableSimplex(this.ZObjective.typeOptimization));
     }
 
@@ -603,12 +628,12 @@ public class Table {
                 if (denominator != 0) //Guardamos el resultado en el arreglo temporal para poder decidir cual sera la fila de salida
                 {
                     if (numerator != 0) {
-                        if (numerator/denominator < 0) {
+                        if (numerator / denominator < 0) {
                             tmpResults[indexSolutions] = 1000000.00;//Numero gigante  
                         } else {
-                            tmpResults[indexSolutions] = numerator / denominator;    
+                            tmpResults[indexSolutions] = numerator / denominator;
                         }
-                        
+
                     } else {
                         tmpResults[indexSolutions] = 1000000.00;//Numero gigante     
                     }
