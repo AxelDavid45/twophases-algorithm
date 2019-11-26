@@ -116,12 +116,12 @@ public class Implementation {
                 Implementation.printSlacks(table);
                 Implementation.printArtificials(table);
                 Implementation.printSolutions(table);
-
-            } else {
-                System.out.println("Resolviendo por simplex");
-            }
+           
 
             Implementation.printFinalSolutions(table);
+             } else {
+                System.out.println("INGRESA UN PROBLEMA CON VARIABLES ARTIFICIALES");
+            }
             
             System.out.println("¿Deseas repetir el programa? SI = 1 || NO = 2");
         } while (answer == 1);
