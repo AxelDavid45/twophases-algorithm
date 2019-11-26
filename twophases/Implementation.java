@@ -180,7 +180,7 @@ public class Implementation {
         System.out.println("Soluciones finales");
         for (int i = 0; i < 1; i++) {
             for (int j = 0; j < t.finalSolutionsWRow[0].length; j++) {
-                System.out.println("X" + (i + 1) + ": " + t.finalSolutionsWRow[i][j]);
+                System.out.println("X" + (j + 1) + ": " + t.finalSolutionsWRow[i][j]);
             }
         }
         System.out.println("Sol Z = " + t.Solutions.lastElement());

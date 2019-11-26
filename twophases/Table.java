@@ -8,7 +8,7 @@ public class Table {
     double[][] Slacks;
     double[][] Artificial;
     //Final solutions con informacion de fila
-    double[][] finalSolutionsWRow;
+    double[] finalSolutionsWRow;
     Vector Solutions; //Contiene las soluciones de cada fila el ultimo elemento es la sol de R o Z
     Constraint[] Constraints; //Contiene las restricciones
     int nArtificial = 0, nSlack = 0; //Guarda el numero de variables artificiales y holgura utilizadas
@@ -26,7 +26,7 @@ public class Table {
         //Inicializamos el arreglo solutions de tamano constraints + 1 donde 1 es la Objective Z o R
         this.Solutions = new Vector(constraints.length + 1);
         //Creamos la matriz de soluciones con informacion de la fila
-        this.finalSolutionsWRow = new double[2][fObjective.coeficients.size()];
+        this.finalSolutionsWRow = new double[fObjective.coeficients.size()];
         this.pivotColumnPhase1 = new double[fObjective.coeficients.size()];
         //Recorremos el array y contabilizamos cuantas varibles de holgura o artificales tenemos
         for (Constraint x : constraints) {
@@ -169,8 +169,6 @@ public class Table {
                 //Hacemos la fila pivote, multiplicando por el inverso multiplicativo
                 this.mkRowPivot(false);
             }
-            
-            
 
             //Una vez realizada la fila pivote, debemos de comprobar que los demas valores que se encuentren en la misma columna que nuestro elemento pivote(valor 1) sea igual a cero, si no debemos comenzar a realizar las sumas o restas correspondientes a cada fila
             //Guardamos en arreglos pequeños los elementos que pertenecen a la fila pivote
@@ -206,19 +204,10 @@ public class Table {
                 //Volvemos a llenar los arreglos para otra iteracion
                 this.fillTmpsArrays(false);
             }
-            //Hacemos una comprobacion para saber si la fila es pivote, si la fila es pivote el valor queda tal cual se asigno anteriormente, si no, el valor cambiara a cero
-        if (this.finalSolutionsWRow[1][this.getEnteringColumn()] == this.getLeavingRow()) {
-            this.finalSolutionsWRow[0][this.getEnteringColumn()] = 0;
-            this.finalSolutionsWRow[1][this.getEnteringColumn()] = this.getLeavingRow();
-        } else {
-            this.finalSolutionsWRow[0][this.getEnteringColumn()] = (double) this.Solutions.get(this.getLeavingRow() - 1);
-            this.finalSolutionsWRow[1][this.getEnteringColumn()] = this.getLeavingRow();
-        }
 
         } while (!this.isStoppablePhase1());
-        
-        //Detectamos cuales fueron las columnas como pivote
 
+        //Detectamos cuales fueron las columnas como pivote
     }
 
     public void doSimplex() {
@@ -240,7 +229,7 @@ public class Table {
                 this.mkRowPivot(true);
             }
             //Decimos que esta fila ya es pivote
-            
+
             //Una vez realizada la fila pivote, debemos de comprobar que los demas valores que se encuentren en la misma columna que nuestro elemento pivote(valor 1) sea igual a cero, si no debemos comenzar a realizar las sumas o restas correspondientes a cada fila
             //Guardamos en arreglos pequeños los elementos que pertenecen a la fila pivote
             //Comenzamos a llenar los arreglos temporales
@@ -276,20 +265,23 @@ public class Table {
                 this.fillTmpsArrays(true);
             }
 
-            //Antes de moverle a las soluciones finales
-            //Hacemos una comprobacion de fila, si la fila que vamos a meter ya estaba asignada a una solucion, ahora la sol en la matriz de sol finales sera 0, si no se encuentra insertamos el valor
-            //Despues de realizar el proceso completo debemos de guardar el valor de la variable de entrada en el arreglo de finalSolutions.
-            if (this.finalSolutionsWRow[1][this.getEnteringColumn()] == this.getLeavingRow()) {
-            this.finalSolutionsWRow[0][this.getEnteringColumn()] = 0;
-            this.finalSolutionsWRow[1][this.getEnteringColumn()] = this.getLeavingRow();
-        } else {
-            this.finalSolutionsWRow[0][this.getEnteringColumn()] = (double) this.Solutions.get(this.getLeavingRow() - 1);
-            this.finalSolutionsWRow[1][this.getEnteringColumn()] = this.getLeavingRow();
-        }
-
+            
 
         } while (!this.isStoppableSimplex(this.ZObjective.typeOptimization));
 
+    }
+    
+    //Funcion que va a decirnos que variables entraron al proceso
+    public void indentifyZeroinZ() {
+        for (int i = 0; i < 1; i++) {
+            for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
+                if (this.MatrixArtificial[i][j] != 0) {
+                    this.finalSolutionsWRow[j] = 0;
+                } else {
+                    this.finalSolutionsWRow[j] = (double) this.Solutions.get(j);
+                }
+            }
+        }
     }
 
     public boolean isStoppableSimplex(int type) {
@@ -322,28 +314,28 @@ public class Table {
         }
         return stoppable;
     }
-    
+
     private boolean detectPivotRow(int row) {
         //La suma de la fila debe ser igual a 1
         double addition = 0;
         for (int i = row; i < 1; i++) {
-            for(int j = 0; j < this.MatrixArtificial[0].length; j++) {
+            for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
                 addition += this.MatrixArtificial[i][j];
             }
         }
-        
+
         return addition == 1;
     }
-    
+
     private boolean detectPivotColumn(int column) {
         //La suma de la fila debe ser igual a 1
         double addition = 0;
         for (int i = 0; i < this.MatrixArtificial.length; i++) {
-            for(int j = column; j < column +1; j++) {
+            for (int j = column; j < column + 1; j++) {
                 addition += this.MatrixArtificial[i][j];
             }
         }
-        
+
         return addition == 1;
     }
 
