@@ -58,8 +58,9 @@ public class Implementation {
                         coeficients[j] = in.nextDouble();
                     }
                     do {
-                        if(operator.equals("x"))
+                        if (operator.equals("x")) {
                             System.out.println("Incorrecto, introduce el dato nuevamente");
+                        }
                         System.out.println("Selecciona el tipo de desigualdad o igualdad: >=  #1 ||<= #2 || = #3");
                         int option = in.nextInt();
                         switch (option) {
@@ -124,7 +125,10 @@ public class Implementation {
                 Implementation.printArtificials(table);
                 Implementation.printSolutions(table);
 
-//                Implementation.printFinalSolutions(table);
+                //Identificamos los resultados de las variables finales
+                table.indentifySolFinal();
+                Implementation.printFinalSolutions(table);
+                
             } else {
                 System.out.println("INGRESA UN PROBLEMA CON VARIABLES ARTIFICIALES");
             }
@@ -176,13 +180,11 @@ public class Implementation {
         }
     }
 
-//    public static void printFinalSolutions(Table t) {
-//        System.out.println("Soluciones finales");
-//        for (int i = 0; i < 1; i++) {
-//            for (int j = 0; j < t.finalSolutionsWRow[0].length; j++) {
-//                System.out.println("X" + (j + 1) + ": " + t.finalSolutionsWRow[i][j]);
-//            }
-//        }
-//        System.out.println("Sol Z = " + t.Solutions.lastElement());
-//    }
+    public static void printFinalSolutions(Table t) {
+        System.out.println("-----Imprimiendo soluciones finales-----");
+        for (int i = 0; i < t.finalSolutionsWRow.length; i++) {
+            System.out.println("X" + (i + 1) + ": " + t.finalSolutionsWRow[i]);
+        }
+        System.out.println("Z = " + t.Solutions.lastElement());
+    }
 }

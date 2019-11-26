@@ -270,7 +270,7 @@ public class Table {
 
     }
 
-    public void identifyRowZero() {
+    public void indentifySolFinal() {
         for (int i = 1; i < this.MatrixArtificial.length; i++) {
             for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
                 if (this.MatrixArtificial[i][j] == 1) {
@@ -280,18 +280,6 @@ public class Table {
         }
     }
 
-    //Funcion que va a decirnos que variables entraron al proceso
-    public void indentifyZeroinZ() {
-        for (int i = 0; i < 1; i++) {
-            for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
-                if (this.MatrixArtificial[i][j] != 0) {
-                    this.finalSolutionsWRow[j] = 0;
-                } else {
-                    this.finalSolutionsWRow[j] = (double) this.Solutions.get(j);
-                }
-            }
-        }
-    }
 
     public boolean isStoppableSimplex(int type) {
         boolean stoppable = false;
