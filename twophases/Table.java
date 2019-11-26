@@ -492,6 +492,7 @@ public class Table {
                 //Hacemos la operacion solicitada
                 double aux = this.MatrixArtificial[rowAffected][j] + this.MatrixArtificial[rowAux][j];
                 //Actualizamos el valor de la posicion
+                //Antes de redondear
                 this.MatrixArtificial[rowAffected][j] = aux;
             }
         }
