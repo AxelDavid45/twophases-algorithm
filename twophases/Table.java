@@ -169,6 +169,7 @@ public class Table {
                 //Hacemos la fila pivote, multiplicando por el inverso multiplicativo
                 this.mkRowPivot(false);
             }
+            //Una vez realizada la fila pivote asignamos la solucion
 
             //Una vez realizada la fila pivote, debemos de comprobar que los demas valores que se encuentren en la misma columna que nuestro elemento pivote(valor 1) sea igual a cero, si no debemos comenzar a realizar las sumas o restas correspondientes a cada fila
             //Guardamos en arreglos pequeños los elementos que pertenecen a la fila pivote
@@ -265,12 +266,20 @@ public class Table {
                 this.fillTmpsArrays(true);
             }
 
-            
-
         } while (!this.isStoppableSimplex(this.ZObjective.typeOptimization));
 
     }
-    
+
+    public void identifyRowZero() {
+        for (int i = 1; i < this.MatrixArtificial.length; i++) {
+            for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
+                if (this.MatrixArtificial[i][j] == 1) {
+                    this.finalSolutionsWRow[j] = (double) this.Solutions.get(i -1);
+                }
+            }
+        }
+    }
+
     //Funcion que va a decirnos que variables entraron al proceso
     public void indentifyZeroinZ() {
         for (int i = 0; i < 1; i++) {
