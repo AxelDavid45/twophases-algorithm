@@ -6,6 +6,7 @@ public class Table {
     double[][] MatrixArtificial;//Matriz de coeficientes de las varibles del problema
     double[][] Slacks;
     double[][] Artificial;
+    //Final solutions con informacion de fila
     double[] finalSolutions;
     Vector Solutions; //Contiene las soluciones de cada fila el ultimo elemento es la sol de R o Z
     Constraint[] Constraints; //Contiene las restricciones
