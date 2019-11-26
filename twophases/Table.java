@@ -265,12 +265,13 @@ public class Table {
         if (type == 1) //Minimizar
         {
             double suma = 0;
+            //se detiene cuando ya no hay ningun elemento negativo para maximizar en la fila objetivo
             for (int i = 0; i < 1; i++) {
                 for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
                     suma += this.MatrixArtificial[i][j];
                 }
             }
-            if (suma <= 0) {
+            if (suma >= 0) {
                 stoppable = true;
             }
         }
@@ -552,7 +553,7 @@ public class Table {
      */
     public void setEnteringColumn(int type) {
         int position = 0;
-        double maximum = this.MatrixArtificial[0][0];
+        double maximum = Math.abs(this.MatrixArtificial[0][0]);
         double minimum = this.MatrixArtificial[0][0];
         //types: 1 minimizar, 2 maximizar
         if (type == 1) {
@@ -560,8 +561,8 @@ public class Table {
             for (int i = 0; i < 1; i++) {
                 for (int j = 1; j < this.MatrixArtificial[0].length; j++) {
                     //Comprobamos que todo sea mayor a cero para que nos de el numero mas positivo
-                    if (this.MatrixArtificial[i][j] > maximum && this.MatrixArtificial[i][j] > 0) {
-                        maximum = this.MatrixArtificial[i][j]; //nuevo maximo
+                    if (Math.abs(this.MatrixArtificial[i][j]) > maximum) {
+                        maximum = Math.abs(this.MatrixArtificial[i][j]); //nuevo maximo
                         position = j; //Posicion columna
                     }
                 }
@@ -600,7 +601,12 @@ public class Table {
                 if (denominator != 0) //Guardamos el resultado en el arreglo temporal para poder decidir cual sera la fila de salida
                 {
                     if (numerator != 0) {
-                        tmpResults[indexSolutions] = numerator / denominator;
+                        if (numerator/denominator < 0) {
+                            tmpResults[indexSolutions] = 1000000.00;//Numero gigante  
+                        } else {
+                            tmpResults[indexSolutions] = numerator / denominator;    
+                        }
+                        
                     } else {
                         tmpResults[indexSolutions] = 1000000.00;//Numero gigante     
                     }
