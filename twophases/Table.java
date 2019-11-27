@@ -125,7 +125,7 @@ public class Table {
         boolean stoppable = false;
         for (int i = 0; i < 1; i++) {
             for (int j = 0; j < this.Artificial[0].length; j++) {
-                if (Math.round(this.Artificial[i][j]) == -1) {
+                if (Math.ceil(this.Artificial[i][j]) == -1) {
                     stoppable = true;
                 }
             }
@@ -181,7 +181,7 @@ public class Table {
 
             //Recorremos la columna buscando si es 0 o no, comenzamos desde la fila 0
             for (int i = 0; i < this.MatrixArtificial.length; i++) {
-                if ((this.MatrixArtificial[i][this.getEnteringColumn()] != 0 && this.MatrixArtificial[i][this.getEnteringColumn()] > 0) && i != this.getLeavingRow()) {
+                if ((this.MatrixArtificial[i][this.getEnteringColumn()] != 0 && this.MatrixArtificial[i][this.getEnteringColumn()] > 0 || this.MatrixArtificial[i][this.getEnteringColumn()] < 0) && i != this.getLeavingRow()) {
                     //Procedemos a guardar el valor temporal para multiplicarlo
                     double tmpValue = (double) this.MatrixArtificial[i][this.getEnteringColumn()] * -1;
 
@@ -299,7 +299,7 @@ public class Table {
                         positives--;
                     }
                 }
-                
+
                 if (positives <= 0) {
                     stoppable = true;
                 }
@@ -640,13 +640,14 @@ public class Table {
                 for (int i = 0; i < 1; i++) {
                     for (int j = 1; j < this.MatrixArtificial[0].length; j++) {
                         //Comprobamos que todo sea mayor a cero para que nos de el numero mas positivo
-                        if (this.MatrixArtificial[i][j] > maximum) {
+                        if (this.MatrixArtificial[i][j] > maximum && this.MatrixArtificial[i][j] != 0) {
                             maximum = this.MatrixArtificial[i][j]; //nuevo maximo
                             position = j; //Posicion columna
                         }
+                        
                     }
                 }
-            } else if (positives == negatives || positives > negatives)  {
+            } else if (positives == negatives || positives > negatives) {
                 double maximum = this.MatrixArtificial[0][0];
                 //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas positivo
                 for (int i = 0; i < 1; i++) {
