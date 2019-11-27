@@ -116,27 +116,42 @@ public class Implementation {
                 Implementation.printSlacks(table);
                 Implementation.printArtificials(table);
                 Implementation.printSolutions(table);
-                //Comenzamos simplex
-                System.out.println("----Comenzamos fase 2 (simplex)-----");
-                table.doSimplex();
-                System.out.println("----Tablas finales fase 2----------");
-                Implementation.printMatrixArtificial(table);
-                Implementation.printSlacks(table);
-                Implementation.printArtificials(table);
-                Implementation.printSolutions(table);
+                if (table.hasInitialSolution()) {
+                    //Comenzamos simplex
+                    System.out.println("----Comenzamos fase 2 (simplex)-----");
+                    table.doSimplex();
+                    System.out.println("----Tablas finales fase 2----------");
+                    Implementation.printMatrixArtificial(table);
+                    Implementation.printSlacks(table);
+                    Implementation.printArtificials(table);
+                    Implementation.printSolutions(table);
 
-                //Identificamos los resultados de las variables finales
-                table.indentifySolFinal();
-                Implementation.printFinalSolutions(table);
-                
+                    //Identificamos los resultados de las variables finales
+                    table.indentifySolFinal();
+                    Implementation.printFinalSolutions(table);
+                } else {
+                    System.out.println("------No tiene solucion o tiene infinitas soluciones----");
+                    //Comenzamos simplex
+                    System.out.println("----Comenzamos fase 2 (simplex)-----");
+                    table.doSimplex();
+                    System.out.println("----Tablas finales fase 2----------");
+                    Implementation.printMatrixArtificial(table);
+                    Implementation.printSlacks(table);
+                    Implementation.printArtificials(table);
+                    Implementation.printSolutions(table);
+
+                    //Identificamos los resultados de las variables finales
+                    table.indentifySolFinal();
+                    Implementation.printFinalSolutions(table);
+                }
+
             } else {
                 System.out.println("INGRESA UN PROBLEMA CON VARIABLES ARTIFICIALES");
             }
 
- 
             System.out.println("¿Deseas repetir el programa? SI = 1 || NO = 2");
             answer = in.nextInt();
-           
+
         } while (answer == 1);
         System.exit(0);
 

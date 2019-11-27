@@ -125,7 +125,7 @@ public class Table {
         boolean stoppable = false;
         for (int i = 0; i < 1; i++) {
             for (int j = 0; j < this.Artificial[0].length; j++) {
-                if (this.Artificial[i][j] == -1) {
+                if (Math.round(this.Artificial[i][j]) == -1) {
                     stoppable = true;
                 }
             }
@@ -632,18 +632,21 @@ public class Table {
                 }
             }
             if (positives < negatives) {
-                double maximum = Math.abs(this.MatrixArtificial[0][0]);
+                double maximum = this.MatrixArtificial[0][0];
+                if (maximum == 0) {
+                    maximum = -10000;
+                }
                 //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas positivo
                 for (int i = 0; i < 1; i++) {
                     for (int j = 1; j < this.MatrixArtificial[0].length; j++) {
                         //Comprobamos que todo sea mayor a cero para que nos de el numero mas positivo
-                        if (Math.abs(this.MatrixArtificial[i][j]) > maximum) {
-                            maximum = Math.abs(this.MatrixArtificial[i][j]); //nuevo maximo
+                        if (this.MatrixArtificial[i][j] > maximum) {
+                            maximum = this.MatrixArtificial[i][j]; //nuevo maximo
                             position = j; //Posicion columna
                         }
                     }
                 }
-            } else if (positives == negatives || positives > negatives) {
+            } else if (positives == negatives || positives > negatives)  {
                 double maximum = this.MatrixArtificial[0][0];
                 //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas positivo
                 for (int i = 0; i < 1; i++) {
