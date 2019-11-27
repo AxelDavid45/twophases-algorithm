@@ -133,7 +133,10 @@ public class Implementation {
                 System.out.println("INGRESA UN PROBLEMA CON VARIABLES ARTIFICIALES");
             }
 
+ 
             System.out.println("¿Deseas repetir el programa? SI = 1 || NO = 2");
+            answer = in.nextInt();
+           
         } while (answer == 1);
         System.exit(0);
 

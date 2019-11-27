@@ -4,6 +4,7 @@ import java.util.Vector;
 
 public class Table {
 
+    static final double NUMEROMENOR = 0.01E-8;
     double[][] MatrixArtificial;//Matriz de coeficientes de las varibles del problema
     double[][] Slacks;
     double[][] Artificial;
@@ -13,7 +14,7 @@ public class Table {
     Constraint[] Constraints; //Contiene las restricciones
     int nArtificial = 0, nSlack = 0; //Guarda el numero de variables artificiales y holgura utilizadas
     Objective ZObjective = null, RObjective = null; //Contiene la funcion objetivo o la R
-    int enteringColumn = 0, leavingRow = 0; //Contiene la posicion de la columna que entra y la fila que sale
+    int enteringColumn, leavingRow; //Contiene la posicion de la columna que entra y la fila que sale
     int nRows, nColumns; //Numero de filas y columnas que tendra la matriz
     //Contienen valores temporales para poder hacer operaciones de suma o resta de filas
     double[] tmpCoeficients;
@@ -161,7 +162,8 @@ public class Table {
         }
         do {
             //Encontramos nuestra variable de salida y de entrada
-            this.setEnteringColumn(1); //Encontrar variable para minimizar de entrada
+            int entering = this.setEnteringColumn(1); //Encontrar variable para minimizar de entrada
+            this.enteringColumn = entering;
             this.setLeavingRow(); //Encontrar fila de salida
 
             //Seleccionamos el valor en la matriz de coeficientes que coincida con la posicon [enteringcolumn, leavingRow] y este sera la fila pivote y comprobar si este es igual a 1, si no multiplicar toda la fila por el inverso multiplicativo
@@ -221,7 +223,8 @@ public class Table {
         this.replaceZObjective();
         do {
             //Encontramos nuestra variable de salida y de entrada
-            this.setEnteringColumn(this.ZObjective.typeOptimization);
+            int entering = this.setEnteringColumn(this.ZObjective.typeOptimization); //Encontrar variable para minimizar de entrada
+            this.enteringColumn = entering;
             this.setLeavingRow(); //Encontrar fila de salida
 
             //Seleccionamos el valor en la matriz de coeficientes que coincida con la posicon [enteringcolumn, leavingRow] y este sera la fila pivote y comprobar si este es igual a 1, si no multiplicar toda la fila por el inverso multiplicativo
@@ -274,38 +277,61 @@ public class Table {
         for (int i = 1; i < this.MatrixArtificial.length; i++) {
             for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
                 if (this.MatrixArtificial[i][j] == 1) {
-                    this.finalSolutionsWRow[j] = (double) this.Solutions.get(i -1);
+                    this.finalSolutionsWRow[j] = (double) this.Solutions.get(i - 1);
                 }
             }
         }
     }
 
-
     public boolean isStoppableSimplex(int type) {
         boolean stoppable = false;
         if (type == 1) //Minimizar
         {
-            double suma = 0;
-            //se detiene cuando ya no hay ningun elemento negativo para maximizar en la fila objetivo
+            int positives = 0, negatives = 0;
             for (int i = 0; i < 1; i++) {
                 for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
-                    suma += this.MatrixArtificial[i][j];
+                    if (this.MatrixArtificial[i][j] >= 0 || this.MatrixArtificial[i][j] > NUMEROMENOR) {
+                        positives++;
+                    } else {
+                        negatives++;
+                    }
+                    if (this.MatrixArtificial[i][j] == 0) {
+                        positives--;
+                    }
+                }
+                
+                if (positives <= 0) {
+                    stoppable = true;
                 }
             }
-            if (suma >= 0) {
-                stoppable = true;
-            }
+//            double suma = 0;
+//            //se detiene cuando ya no hay ningun elemento negativo para maximizar en la fila objetivo
+//            for (int i = 0; i < 1; i++) {
+//                for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
+//                    suma += this.MatrixArtificial[i][j];
+//                }
+//            }
+//            if (suma >= 0) {
+//                stoppable = true;
+//            }
         }
         //Maximizar
         if (type == 2) {
-            double suma = 0;
-            //se detiene cuando ya no hay ningun elemento negativo para maximizar en la fila objetivo
+            int positives = 0, negatives = 0;
             for (int i = 0; i < 1; i++) {
                 for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
-                    suma += this.MatrixArtificial[i][j];
+                    if (this.MatrixArtificial[i][j] >= 0 || this.MatrixArtificial[i][j] > NUMEROMENOR) {
+                        positives++;
+                    } else {
+                        negatives++;
+                    }
+                    if (this.MatrixArtificial[i][j] == 0) {
+                        positives--;
+                    }
                 }
             }
-            if (suma >= 0) {
+
+            if (negatives <= 0) {
                 stoppable = true;
             }
         }
@@ -597,22 +623,50 @@ public class Table {
         Analiza cual va a ser la columna que va a ser la entrante y lo guarda en la propiedad 
         EnteringColumn
      */
-    public void setEnteringColumn(int type) {
+    public int setEnteringColumn(int type) {
         int position = 0;
-        double maximum = Math.abs(this.MatrixArtificial[0][0]);
         double minimum = this.MatrixArtificial[0][0];
         //types: 1 minimizar, 2 maximizar
         if (type == 1) {
-            //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas positivo
+            int positives = 0, negatives = 0;
             for (int i = 0; i < 1; i++) {
-                for (int j = 1; j < this.MatrixArtificial[0].length; j++) {
-                    //Comprobamos que todo sea mayor a cero para que nos de el numero mas positivo
-                    if (Math.abs(this.MatrixArtificial[i][j]) > maximum) {
-                        maximum = Math.abs(this.MatrixArtificial[i][j]); //nuevo maximo
-                        position = j; //Posicion columna
+                for (int j = 0; j < this.MatrixArtificial[0].length; j++) {
+                    if (this.MatrixArtificial[i][j] >= 0 || this.MatrixArtificial[i][j] > NUMEROMENOR) {
+                        positives++;
+                    } else {
+                        negatives++;
+                    }
+                    if (this.MatrixArtificial[i][j] == 0) {
+                        positives--;
                     }
                 }
             }
+            if (positives < negatives) {
+                double maximum = Math.abs(this.MatrixArtificial[0][0]);
+                //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas positivo
+                for (int i = 0; i < 1; i++) {
+                    for (int j = 1; j < this.MatrixArtificial[0].length; j++) {
+                        //Comprobamos que todo sea mayor a cero para que nos de el numero mas positivo
+                        if (Math.abs(this.MatrixArtificial[i][j]) > maximum) {
+                            maximum = Math.abs(this.MatrixArtificial[i][j]); //nuevo maximo
+                            position = j; //Posicion columna
+                        }
+                    }
+                }
+            } else if (positives == negatives || positives > negatives) {
+                double maximum = this.MatrixArtificial[0][0];
+                //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas positivo
+                for (int i = 0; i < 1; i++) {
+                    for (int j = 1; j < this.MatrixArtificial[0].length; j++) {
+                        //Comprobamos que todo sea mayor a cero para que nos de el numero mas positivo
+                        if (this.MatrixArtificial[i][j] > maximum) {
+                            maximum = this.MatrixArtificial[i][j]; //nuevo maximo
+                            position = j; //Posicion columna
+                        }
+                    }
+                }
+            }
+
         } else if (type == 2) { //Maximizar
             //Vamos a recorrer la primera fila de la matriz de coeficientes para encontrar el numero mas negativo
             for (int i = 0; i < 1; i++) {
@@ -624,8 +678,8 @@ public class Table {
                 }
             }
         }
-
         this.enteringColumn = position;
+        return this.enteringColumn;
     }
 
     public void setLeavingRow() {
